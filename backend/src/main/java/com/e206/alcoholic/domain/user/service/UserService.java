@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // 읽기 전용 트랜잭션 설정
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
 
@@ -25,6 +25,12 @@ public class UserService {
     private User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + username));
+    }
+
+    // 현재 사용자의 ID를 조회하는 메서드
+    public Long getCurrentUserId() {
+        User user = getUserByUsername(getCurrentUsername());
+        return (long) user.getId();
     }
 
     // 현재 사용자의 정보를 조회하는 메서드
