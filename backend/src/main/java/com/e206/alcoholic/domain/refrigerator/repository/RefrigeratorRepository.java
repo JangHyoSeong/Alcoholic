@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface RefrigeratorRepository extends JpaRepository<Refrigerator, Long> {
-    List<Refrigerator> findByUserId(Long userId); // 냉장고 목록 조회
-    Optional<Refrigerator> findByIdAndUserId(Long id, Long userId); // 특정 냉장고의 사용자인지 조회
-    long countByUserId(Long userId); // 사용자별 냉장고 개수 조회
+public interface RefrigeratorRepository extends JpaRepository<Refrigerator, Integer> {
+    List<Refrigerator> findByUserId(int userId); // 냉장고 목록 조회
+    Optional<Refrigerator> findByIdAndUserId(int id, int userId); // 특정 냉장고의 사용자인지 조회
+    int countByUserId(int userId); // 사용자별 냉장고 개수 조회
     boolean existsBySerialNumber(String serialNumber); // 시리얼 번호 중복 체크
 }

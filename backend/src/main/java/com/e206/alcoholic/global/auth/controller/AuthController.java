@@ -4,11 +4,14 @@ package com.e206.alcoholic.global.auth.controller;
 import com.e206.alcoholic.global.auth.dto.request.LoginRequestDto;
 import com.e206.alcoholic.global.auth.dto.request.SignUpRequestDto;
 import com.e206.alcoholic.global.auth.dto.response.AuthResponseDto;
+import com.e206.alcoholic.global.auth.dto.response.LoginResponseDto;
 import com.e206.alcoholic.global.auth.jwt.JwtUtil;
 import com.e206.alcoholic.global.auth.service.AuthService;
+import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +39,7 @@ public class AuthController {
 
     // 로그인 요청 처리
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto requestDto) {
         try {
             // 인증 처리
             Authentication authentication = authenticationManager.authenticate(
@@ -46,17 +49,11 @@ public class AuthController {
             // JWT 토큰 생성
             String token = jwtUtil.createJwt(authentication.getName(), Duration.ofDays(30).toMillis());
 
-            // 응답 객체 생성
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-            response.put("username", authentication.getName());
-
-            return ResponseEntity.ok(response);
+            // DTO 객체를 사용하여 응답 생성
+            return ResponseEntity.ok(new LoginResponseDto(token, authentication.getName()));
 
         } catch (AuthenticationException e) {
-            return ResponseEntity
-                    .status(ErrorCode.USER_NOT_FOUND.getStatus())
-                    .body(ErrorCode.USER_NOT_FOUND.getMessage());
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
     }
 }

@@ -28,9 +28,9 @@ public class UserService {
     }
 
     // 현재 사용자의 ID를 조회하는 메서드
-    public Long getCurrentUserId() {
+    public int getCurrentUserId() {
         User user = getUserByUsername(getCurrentUsername());
-        return (long) user.getId();
+        return user.getId();
     }
 
     // 현재 사용자의 정보를 조회하는 메서드
