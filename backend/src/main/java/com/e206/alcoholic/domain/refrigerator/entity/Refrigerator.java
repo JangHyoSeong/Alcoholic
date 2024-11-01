@@ -20,10 +20,10 @@ import lombok.NoArgsConstructor;
 public class Refrigerator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가 전략 사용
-    private Long id; // 냉장고 ID
+    private int id; // 냉장고 ID
 
     @Column(nullable = false)
-    private Long userId; // 냉장고 소유자 ID
+    private int userId; // 냉장고 소유자 ID
 
     @Column(nullable = false)
     private String name; // 냉장고 이름

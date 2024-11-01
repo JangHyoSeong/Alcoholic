@@ -22,14 +22,14 @@ public class RefrigeratorService {
     private final UserService userService;
 
     // 냉장고 조회 시 해당 사용자의 냉장고가 맞는지 확인하는 메서드
-    private Refrigerator getRefrigeratorByIdAndUserId(Long refrigeratorId, Long userId) {
+    private Refrigerator getRefrigeratorByIdAndUserId(int refrigeratorId, int userId) {
         return refrigeratorRepository.findByIdAndUserId(refrigeratorId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
     }
 
     // 현재 로그인한 사용자의 모든 냉장고 목록을 조회
     public ListResponseDto getRefrigerators() {
-        Long currentUserId = userService.getCurrentUserId();  // 현재 로그인한 사용자 ID 가져오기
+        int currentUserId = userService.getCurrentUserId();  // 현재 로그인한 사용자 ID 가져오기
         List<ListResponseDto.RefrigeratorResponse> responses =
                 refrigeratorRepository.findByUserId(currentUserId)  // 해당 사용자의 냉장고 목록 조회
                         .stream()
@@ -47,16 +47,20 @@ public class RefrigeratorService {
     // 새로운 냉장고 등록
     @Transactional  // 쓰기 작업이므로 트랜잭션 필요
     public void createRefrigerator(CreateRequestDto request) {
-        Long currentUserId = userService.getCurrentUserId();
+        int currentUserId = userService.getCurrentUserId();
         // 시리얼 번호 중복 체크
         if (refrigeratorRepository.existsBySerialNumber(request.getSerialNumber())) {
             throw new CustomException(ErrorCode.DUPLICATE_SERIAL_NUMBER);
         }
+        // 사용자의 냉장고 개수를 한 번만 조회
+        int index = refrigeratorRepository.countByUserId(currentUserId);
+
         // 사용자의 첫 냉장고인 경우 메인 냉장고로 설정
-        boolean isMain = refrigeratorRepository.countByUserId(currentUserId) == 0;
+        boolean isMain = index == 0;
+
         // 새 냉장고 엔티티 생성 및 저장
         Refrigerator refrigerator = Refrigerator.builder()
-                .name("냉장고 " + (refrigeratorRepository.countByUserId(currentUserId) + 1))
+                .name("냉장고 " + (index + 1))
                 .serialNumber(request.getSerialNumber())
                 .userId(currentUserId)
                 .isMain(isMain)
@@ -66,8 +70,8 @@ public class RefrigeratorService {
 
     // 냉장고 삭제
     @Transactional
-    public void deleteRefrigerator(Long refrigeratorId) {
-        Long currentUserId = userService.getCurrentUserId();
+    public void deleteRefrigerator(int refrigeratorId) {
+        int currentUserId = userService.getCurrentUserId();
         Refrigerator refrigerator = getRefrigeratorByIdAndUserId(refrigeratorId, currentUserId);
         // 메인 냉장고는 삭제 불가능
         if (refrigerator.isMain()) {
@@ -78,8 +82,8 @@ public class RefrigeratorService {
 
     // 냉장고 이름 수정
     @Transactional
-    public void updateRefrigeratorName(Long refrigeratorId, UpdateRequestDto request) {
-        Long currentUserId = userService.getCurrentUserId();
+    public void updateRefrigeratorName(int refrigeratorId, UpdateRequestDto request) {
+        int currentUserId = userService.getCurrentUserId();
         Refrigerator refrigerator = getRefrigeratorByIdAndUserId(refrigeratorId, currentUserId);
         refrigerator.updateName(request.getName());
     }

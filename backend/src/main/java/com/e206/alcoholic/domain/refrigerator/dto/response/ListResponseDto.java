@@ -20,7 +20,7 @@ public class ListResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RefrigeratorResponse {
-        private Long id; // 냉장고 ID
+        private int id; // 냉장고 ID
         private String name; // 냉장고 이름
         private boolean isMain; // 메인 냉장고 여부
     }

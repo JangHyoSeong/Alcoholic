@@ -32,7 +32,7 @@ public class RefrigeratorController {
 
     // 냉장고 삭제 API
     @DeleteMapping("/{refrigeratorId}")
-    public ResponseEntity<Void> deleteRefrigerator(@PathVariable Long refrigeratorId) {
+    public ResponseEntity<Void> deleteRefrigerator(@PathVariable int refrigeratorId) {
         refrigeratorService.deleteRefrigerator(refrigeratorId);
         return ResponseEntity.ok().build();
     }
@@ -40,7 +40,7 @@ public class RefrigeratorController {
     // 냉장고 이름 수정 API
     @PatchMapping("/{refrigeratorId}")
     public ResponseEntity<Void> updateRefrigeratorName(
-            @PathVariable Long refrigeratorId,
+            @PathVariable int refrigeratorId,
             @RequestBody UpdateRequestDto request) {
         refrigeratorService.updateRefrigeratorName(refrigeratorId, request);
         return ResponseEntity.ok().build();

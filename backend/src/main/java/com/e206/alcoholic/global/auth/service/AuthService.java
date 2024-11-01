@@ -16,15 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AuthService implements UserDetailsService {
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Spring Security 인증을 위한 사용자 정보 로드
+    // 사용자 정보 조회
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) {
-        Auth auth = getUserByUsername(username);
+        // 사용자 정보를 조회하고, 없으면 예외 발생
+        Auth auth = authRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // User 객체 생성 및 반환
         return org.springframework.security.core.userdetails.User.builder()
                 .username(auth.getUsername())
                 .password(auth.getPassword())
@@ -47,11 +51,5 @@ public class AuthService implements UserDetailsService {
                 .build();
 
         return new AuthResponseDto(authRepository.save(auth));
-    }
-
-    // 사용자 아이디로 인증 정보 조회
-    private Auth getUserByUsername(String username) {
-        return authRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 }
