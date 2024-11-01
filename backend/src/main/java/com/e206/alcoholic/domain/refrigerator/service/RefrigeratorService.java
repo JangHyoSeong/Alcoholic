@@ -52,11 +52,15 @@ public class RefrigeratorService {
         if (refrigeratorRepository.existsBySerialNumber(request.getSerialNumber())) {
             throw new CustomException(ErrorCode.DUPLICATE_SERIAL_NUMBER);
         }
+        // 사용자의 냉장고 개수를 한 번만 조회
+        int index = refrigeratorRepository.countByUserId(currentUserId);
+
         // 사용자의 첫 냉장고인 경우 메인 냉장고로 설정
-        boolean isMain = refrigeratorRepository.countByUserId(currentUserId) == 0;
+        boolean isMain = index == 0;
+
         // 새 냉장고 엔티티 생성 및 저장
         Refrigerator refrigerator = Refrigerator.builder()
-                .name("냉장고 " + (refrigeratorRepository.countByUserId(currentUserId) + 1))
+                .name("냉장고 " + (index + 1))
                 .serialNumber(request.getSerialNumber())
                 .userId(currentUserId)
                 .isMain(isMain)
