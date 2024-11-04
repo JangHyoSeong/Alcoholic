@@ -3,6 +3,8 @@ package com.e206.alcoholic.global.config;
 import com.e206.alcoholic.global.auth.jwt.JwtFilter;
 import com.e206.alcoholic.global.auth.jwt.JwtUtil;
 import com.e206.alcoholic.global.auth.service.AuthService;
+import com.e206.alcoholic.global.error.CustomAuthenticationEntryPoint;
+import com.e206.alcoholic.global.error.CustomAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -25,11 +27,20 @@ public class SecurityConfig {
     private final AuthService authService;
     private final JwtUtil jwtUtil;
     private final CorsConfig corsConfig;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    public SecurityConfig(@Lazy AuthService authService, JwtUtil jwtUtil, CorsConfig corsConfig) {
+    public SecurityConfig(
+            @Lazy AuthService authService,
+            JwtUtil jwtUtil,
+            CorsConfig corsConfig,
+            CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+            CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.authService = authService;
         this.jwtUtil = jwtUtil;
         this.corsConfig = corsConfig;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
@@ -50,6 +61,9 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) // 401 Unauthorized
+                        .accessDeniedHandler(customAccessDeniedHandler)) // 403 Forbidden
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll() // Swagger UI 관련 설정
                         .requestMatchers("/api/v1/auth/**").permitAll() // 기존 인증 제외 API
