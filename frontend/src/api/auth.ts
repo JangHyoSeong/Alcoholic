@@ -13,7 +13,7 @@ export interface User {
 
 const registerUser = async (user:User): Promise<User | string> => {
   try {
-    const response = await axiosInstance.post<User>(`/auth/register`, {
+    const response = await axiosInstance.post<User>(`/auth/regist`, {
       username: user.username,
       password: user.password,
       nickname: user.nickname,
@@ -26,15 +26,16 @@ const registerUser = async (user:User): Promise<User | string> => {
 
 const loginUser = async (username: string, password: string): Promise<string> => {
   try {
-    const response = await axiosInstance.post(`/auth/login`, {
+    const {data, headers} = await axiosInstance.post(`/auth/login`, {
       username,
       password,
     })
 
-    const token = response.headers['Authorization']
+    const token = headers.authorization;
+    console.log('토큰입니당', token)
     return token
   } catch (error: any) {
-    console.error('로그인 에러', error)
+    console.error('로그인 에러', error.message)
     return error
   }
 }
