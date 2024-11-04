@@ -7,6 +7,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class LoginResponseDto {
-    private String token; // JWT 토큰
-    private String username; // 사용자 아이디
+    private String message;
 }
