@@ -7,7 +7,7 @@ import CustomButton from '@/components/common/CustomButton';
 import CustomFont from '@/components/common/CustomFont';
 import main_logo from '@/assets/main_logo.png'
 import { useState } from 'react';
-import { validateInputUser } from '@/utils/validate';
+import { validateInputUser } from '@/utils';
 import { ResponseUserProfile } from '@/types/domain';
 import { registerUser } from '@/api/auth';
 
