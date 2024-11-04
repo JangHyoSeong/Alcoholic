@@ -1,6 +1,4 @@
 import axiosInstance from "./axios";
-import { useUserStore } from "@/state/useUserStore";
-import { useAppStore } from "@/state/useAppStore";
 
 const getUserInfo = async (token: string): Promise<{ nickname: string; username: string } | undefined> => {
   try {
@@ -15,9 +13,15 @@ const getUserInfo = async (token: string): Promise<{ nickname: string; username:
   }
 }
 
-const patchUserInfo = async (): Promise<string | void> => {
+const patchUserInfo = async (token: string, newNickname: string): Promise<{ nickname: string; username: string } | void> => {
   try {
-    const response = await axiosInstance.patch('/user')
+    const response = await axiosInstance.patch('/user', {
+      nickname: newNickname
+    },{
+      headers: {
+        Authorization: `${token}`
+      }
+    })
     return response.data
   } catch (error) {
     console.error('함수가 유저 닉네임을 변경하는 데 실패함', error)
