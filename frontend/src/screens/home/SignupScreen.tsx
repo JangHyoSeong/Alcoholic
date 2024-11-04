@@ -2,13 +2,14 @@ import tw from 'twrnc';
 import { View, Text, SafeAreaView, Image, TextInput } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@/navigations/stack/AuthStackNavigator';
-import { AuthNavigations, mainNavigations } from '@/constants';
+import { AuthNavigations } from '@/constants';
 import CustomButton from '@/components/common/CustomButton';
 import CustomFont from '@/components/common/CustomFont';
 import main_logo from '@/assets/main_logo.png'
 import { useState } from 'react';
 import { validateInputUser } from '@/utils/validate';
 import { ResponseUserProfile } from '@/types/domain';
+import { registerUser } from '@/api/auth';
 
 type AuthHomeProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -27,7 +28,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
     nickName: '',
   })
 
-  const handlePasswordCheck = () => {
+  const handleSignup = async () => {
     const values: ResponseUserProfile = {
       username,
       password,
@@ -46,10 +47,19 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
     }
 
     if (!validationErrors.userName && !validationErrors.password && !validationErrors.nickName) {
-      console.log('회원가입이 완료되었습니다!')
-      navigation.navigate('AuthHome')
+      try {
+        const response = await registerUser({ username, password, nickname });
+        if (response === 'ok') { // 회원가입 성공 여부를 확인합니다.
+          console.log('회원가입이 완료되었습니다!');
+          navigation.navigate('AuthHome');
+        } else {
+          console.error(response); // 실패 메시지 로깅
+        }
+      } catch (error) {
+        console.error('회원가입 중 오류 발생:', error);
+      }
     }
-  }
+  };
  return (
   <SafeAreaView>
     <View style={tw`items-center h-full mt-10`}>
@@ -96,7 +106,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
       <CustomButton
         label="회원가입"
         size="small"
-        onPress={handlePasswordCheck}
+        onPress={handleSignup}
         style={tw`mx-4 drop`}
       />
     </View>
