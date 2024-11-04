@@ -10,7 +10,7 @@ interface Appstate {
 
 export const useAppStore = create<Appstate>((set) => ({
   token : '',
-  isLogin : false,
+  isLogin : true,
 
   setToken: (value: string) => set({ token : value }),
   setLogin: (value: boolean) => set({ isLogin : value }),

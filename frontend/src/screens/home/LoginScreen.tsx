@@ -7,6 +7,8 @@ import { AuthNavigations, mainNavigations } from '@/constants';
 import CustomFont from '@/components/common/CustomFont';
 import CustomButton from '@/components/common/CustomButton';
 import { useState } from 'react';
+import { loginUser } from '@/api/auth';
+import { useAppStore } from '@/state/useAppStore';
 
 
 type AuthHomeProps = NativeStackScreenProps<
@@ -19,15 +21,20 @@ const LoginScreen = ({ navigation }: AuthHomeProps) => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleLogin = () => {
-    const correctUsername = 'test'
-    const correctPassword = 'abcd'
-
-    if ( username === correctUsername && password === correctPassword) {
-      navigation.navigate(mainNavigations.HOME)
-    } else {
-      setError('아이디, 비밀번호가 틀렸습니다!')
-      console.error('에러발생!')
+  const { setToken, setLogin } = useAppStore()
+  
+  const handleLogin = async () => {
+    try {
+      const token = await loginUser(username, password)
+      if (token) {
+        setToken(token)
+        setLogin(true)
+        navigation.navigate(mainNavigations.HOME)
+      } else {
+        setError('토큰을 받지 못했습니다.')
+      }
+    } catch (error: any) {
+      console.error('로그인 오류')
     }
   }
 
