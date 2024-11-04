@@ -1,10 +1,13 @@
 import tw from 'twrnc';
 import { Text, View } from 'react-native';
+import MypageBanner from '@/components/mypage/MypageBanner';
+import MypageForm from '@/components/mypage/MypageForm';
 
 const MyPageScreen = () => {
  return (
-   <View style={tw`bg-green-500`}>
-     <Text>마이페이지</Text>
+   <View style={tw``}>
+     <MypageBanner />
+     <MypageForm />
    </View>
  );
 };

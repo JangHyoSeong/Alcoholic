@@ -49,7 +49,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
     if (!validationErrors.userName && !validationErrors.password && !validationErrors.nickName) {
       try {
         const response = await registerUser({ username, password, nickname });
-        if (response === 'ok') { // 회원가입 성공 여부를 확인합니다.
+        if (response) { // 회원가입 성공 여부를 확인합니다.
           console.log('회원가입이 완료되었습니다!');
           navigation.navigate('AuthHome');
         } else {

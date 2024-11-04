@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 interface Appstate {
-  token : string | null;
+  token : string;
   isLogin : boolean;
 
   setToken : (value: string) => void;
