@@ -11,7 +11,7 @@ import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,8 +20,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -37,7 +35,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.signUp(requestDto));
     }
 
-    // 로그인 요청 처리
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto requestDto) {
         try {
@@ -49,11 +46,18 @@ public class AuthController {
             // JWT 토큰 생성
             String token = jwtUtil.createJwt(authentication.getName(), Duration.ofDays(30).toMillis());
 
+            // 헤더에 Authorization 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+
             // DTO 객체를 사용하여 응답 생성
-            return ResponseEntity.ok(new LoginResponseDto(token, authentication.getName()));
+            LoginResponseDto responseDto = new LoginResponseDto("로그인 성공");
+
+            return ResponseEntity.ok().headers(headers).body(responseDto);
 
         } catch (AuthenticationException e) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
     }
+
 }
