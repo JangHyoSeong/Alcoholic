@@ -4,6 +4,8 @@ import { TouchableOpacity, View, Alert, TextInput } from 'react-native';
 import CustomFont from '../common/CustomFont';
 import { delRef, patchRef } from '@/api/refrigerator';
 import { useAppStore } from '@/state/useAppStore';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { colors } from '@/constants';
 
 interface RefItemProps {
   item: {
@@ -55,17 +57,17 @@ const RefItem: React.FC<RefItemProps> = ({ item, onDelete }) => {
   }
 
   return (
-    <View style={tw`bg-gray-800 m-2 h-[200px] rounded-md overflow-hidden`}>
+    <View style={[tw`bg-gray-400 m-2 h-[200px] rounded-md overflow-hidden`, {elevation: 4}]}>
       {isEditing ? (
         <View style={tw`flex-row items-center`}>
           <TextInput
-            style={tw`border p-2 rounded ml-1 mr-2 flex-1 text-white`}
+            style={tw`border border-white p-2 rounded ml-1 mr-2 flex-1 text-white`}
             value={newname}
             onChangeText={setNewname}
             onBlur={handleRefnamePut} // 포커스가 벗어날 때 변경 요청
           />
           <TouchableOpacity onPress={handleRefnamePut}>
-            <CustomFont color='cyan' style={tw`pr-2`} fontSize={20}>확인</CustomFont>
+            <CustomFont style={tw`pr-2 text-[purple]`} fontSize={17}>확인</CustomFont>
           </TouchableOpacity>
         </View>
       ) : (
@@ -76,12 +78,13 @@ const RefItem: React.FC<RefItemProps> = ({ item, onDelete }) => {
         </TouchableOpacity>
       )}
       {item.main && (
-        <CustomFont style={tw`text-yellow-500 p-4`} fontSize={14}>
+        <CustomFont style={tw`text-yellow-400 p-4`} fontSize={14}>
           메인 술장고
         </CustomFont>
       )}
-      <TouchableOpacity onPress={handleDelete}>
-        <CustomFont style={tw`text-[crimson] p-4`}>삭제하기</CustomFont>
+      <Ionicons style={tw`absolute top-14 right-6`} name={'wine'} color={colors.PURPLE.BASE} size={45} />
+      <TouchableOpacity onPress={handleDelete} style={tw`absolute right-4 bottom-4`}>
+        <CustomFont style={tw`text-[crimson]`}>삭제하기</CustomFont>
       </TouchableOpacity>
     </View>
 

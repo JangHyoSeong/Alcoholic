@@ -41,7 +41,7 @@ const MypageForm = () => {
         onBlur={handleNicknamePut} // 포커스가 벗어날 때 변경 요청
       />
       <TouchableOpacity onPress={handleNicknamePut}>
-        <CustomFont color='blue' fontSize={30}>확인</CustomFont>
+        <CustomFont style={tw`text-purple-500 mr-1`} fontSize={17}>확인</CustomFont>
       </TouchableOpacity>
     </View>
   ) : (
