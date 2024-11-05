@@ -1,9 +1,7 @@
-// ErrorResponse.java
 package com.e206.alcoholic.global.error;
 
 import lombok.Getter;
 
-// 에러 응답 DTO
 @Getter
 public class ErrorResponse {
     private final String message;

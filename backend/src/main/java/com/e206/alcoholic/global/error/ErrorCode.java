@@ -1,4 +1,3 @@
-// ErrorCode.java
 package com.e206.alcoholic.global.error;
 
 import lombok.Getter;
