@@ -7,8 +7,9 @@ import RefItem from '@/components/refrigerator/RefItem';
 import AddRefModal from '@/components/refrigerator/AddRefModal';
 import { useAppStore } from '@/state/useAppStore';
 import { getRef } from '@/api/refrigerator';
+import { useUserStore } from '@/state/useUserStore';
 
-interface RefItemData {
+export interface RefItemData {
   id: number;
   name: string;
   main: boolean;
@@ -20,11 +21,17 @@ const MyRefScreen: React.FC = () => {
   const [ nextId, setNextId ] = useState(0)
   const token = useAppStore((state) => state.token)
   const [refetch, setRefetch ] = useState(false)
+  const setIsRef = useUserStore((state) => state.setIsRef)
+
+  useEffect(() => {
+    // refItems의 길이에 따라 isRef 상태 업데이트
+    setIsRef(refItems.length > 0);
+  }, [refItems, setIsRef]);
 
   useEffect(() => {
     const fetchRefItems = async () => {
       const data = await getRef(token)
-      console.log('이거 술장고 아이템',data)
+      // console.log('이거 술장고 아이템',data)
       if (data) {
         setRefItems(data.results)
         const maxId = data.results.reduce((max: number, item: RefItemData) => Math.max(max, item.id), 0);
@@ -70,7 +77,7 @@ const MyRefScreen: React.FC = () => {
     <View style={tw`mt-5`}>
       <CustomFont style={tw`ml-4`} fontSize={30} fontWeight='bold'>나의 술장고</CustomFont>
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-        <CustomFont style={tw`text-right text-[blue] mr-2`} fontSize={15}>추가하기</CustomFont>
+        <CustomFont style={tw`text-right text-[purple] mr-2`} fontSize={15}>추가하기</CustomFont>
       </TouchableOpacity>
       {refItems.length > 0 ? (
         <FlatList
