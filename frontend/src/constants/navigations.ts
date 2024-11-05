@@ -20,7 +20,6 @@ const RecommendNavigations = {
 
 const MyStorageNavigations = {
   STORAGE_HOME : 'StorageHome',
-  STORAGE_REGISTER : 'StorageRegister',
   WINE_REGISTER : 'WineRegister',
   MYSTORAGE_DETAIL : 'MyStorageDetail',
   WINE_DETAIL : 'WineDetail',

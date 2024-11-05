@@ -1,4 +1,4 @@
-import react,{ useState } from 'react';
+import React,{ useState } from 'react';
 import tw from 'twrnc';
 import { TouchableOpacity, View, TextInput } from 'react-native';
 import CustomFont from '../common/CustomFont';

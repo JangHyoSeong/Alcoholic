@@ -6,7 +6,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { StorageStackParamList } from '@/navigations/stack/StorageStackNavigator';
 import { MyStorageNavigations } from '@/constants';
-import { Shadow } from 'react-native-shadow-2'
 
 const MyRefBanner = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StorageStackParamList>>()
