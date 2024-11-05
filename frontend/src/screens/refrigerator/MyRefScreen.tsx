@@ -17,7 +17,7 @@ interface RefItemData {
 const MyRefScreen: React.FC = () => {
   const [refItems, setRefItems ] = useState<RefItemData[]>([])
   const [isModalVisible, setIsModalVisible ] = useState(false)
-  const [nextId, setNextId ] = useState(0)
+  const [ nextId, setNextId ] = useState(0)
   const token = useAppStore((state) => state.token)
   const [refetch, setRefetch ] = useState(false)
 
@@ -27,23 +27,43 @@ const MyRefScreen: React.FC = () => {
       console.log('이거 술장고 아이템',data)
       if (data) {
         setRefItems(data.results)
-        setNextId(data.results.length)
+        const maxId = data.results.reduce((max: number, item: RefItemData) => Math.max(max, item.id), 0);
+        setNextId(maxId)
       }
     }
     fetchRefItems()
   }, [refetch])
 
   const handleAddSuccess = (serialNumber: string) => {
+
+    const newId = nextId
+
     const newRefItem: RefItemData = {
-      id: nextId,
-      name: `냉장고${nextId}`,
+      id: newId,
+      name: `냉장고${newId}`,
       main: false
     };
 
-    setRefItems((prevItems) => [...prevItems, newRefItem]);
-    setNextId((prevId) => prevId + 1); // nextId 증가
+    setRefItems((prevItems) => {
+      // 현재 항목의 ID 배열을 가져옵니다.
+      const existingIds = prevItems.map(item => item.id);
+      
+      let uniqueId = newId
+      while (existingIds.includes(uniqueId)) {
+        uniqueId++;
+      }
+  
+      return [...prevItems, { ...newRefItem, id: uniqueId}];
+    });
+    setNextId(prevId => prevId + 1)
     setRefetch((prev) => !prev)
     setIsModalVisible(false)
+  };
+
+  const handleDelete = async (id: number) => {
+    // 삭제 후 상태 업데이트
+    setRefItems((prevItems) => prevItems.filter(item => item.id !== id));
+    setRefetch((prev) => !prev); // 데이터 새로 고침
   };
 
   return (
@@ -56,7 +76,7 @@ const MyRefScreen: React.FC = () => {
         <FlatList
           data={refItems}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <RefItem item={item} />}
+          renderItem={({ item }) => <RefItem item={item} onDelete={handleDelete} />}
         />
       ) : (
       <ImageBackground
