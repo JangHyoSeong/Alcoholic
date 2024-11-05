@@ -1,11 +1,13 @@
 package com.e206.alcoholic.global.config;
 
+import com.e206.alcoholic.domain.user.service.UserService;
 import com.e206.alcoholic.global.auth.jwt.JwtFilter;
+import com.e206.alcoholic.global.auth.jwt.JwtLoginFilter;
 import com.e206.alcoholic.global.auth.jwt.JwtUtil;
-import com.e206.alcoholic.global.auth.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,21 +18,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final AuthService authService;
     private final JwtUtil jwtUtil;
     private final CorsConfig corsConfig;
-
-    public SecurityConfig(@Lazy AuthService authService, JwtUtil jwtUtil, CorsConfig corsConfig) {
-        this.authService = authService;
-        this.jwtUtil = jwtUtil;
-        this.corsConfig = corsConfig;
-    }
+    private final UserService userService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -43,21 +39,30 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        JwtLoginFilter jwtLoginFilter = new JwtLoginFilter(authenticationManager, jwtUtil);
+        jwtLoginFilter.setFilterProcessesUrl("/api/v1/auth/login");
+
+        return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .anonymous(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilter(corsConfig.corsFilter())
+                .userDetailsService(userService)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll() // Swagger UI 관련 설정
-                        .requestMatchers("/api/v1/auth/**").permitAll() // 기존 인증 제외 API
-                        .anyRequest().authenticated() // 나머지 경로는 인증 필요
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/**").authenticated()
+                        .anyRequest().permitAll()
                 )
-                .addFilterBefore(new JwtFilter(jwtUtil, authService),
-                        UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+                .addFilterBefore(new JwtFilter(jwtUtil),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 }

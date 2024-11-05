@@ -1,35 +1,48 @@
-// User.java
 package com.e206.alcoholic.domain.user.entity;
 
-import jakarta.persistence.*;
+import com.e206.alcoholic.global.auth.dto.SignUpDto;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
+@Table(name = "users")
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user")
+@Getter
+@Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; // 사용자 식별자
+    private Integer id;
 
     @Column(nullable = false, unique = true)
-    private String username; // 사용자 아이디
+    private String username;
 
     @Column(nullable = false)
-    private String nickname; // 사용자 닉네임
+    private String password;
 
-    @Builder
-    public User(String username, String nickname) {
-        this.username = username;
-        this.nickname = nickname;
+    @Column(nullable = false)
+    private String nickname;
+
+    public static User ToUserFromSignUpRequestDto(SignUpDto signUpDto) {
+        return User.builder()
+                .username(signUpDto.getUsername())
+                .password(signUpDto.getPassword())
+                .nickname(signUpDto.getNickname())
+                .build();
     }
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
-    } // 닉네임 수정
+    }
 }

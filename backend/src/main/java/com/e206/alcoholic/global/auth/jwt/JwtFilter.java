@@ -1,19 +1,17 @@
-// JwtFilter.java
 package com.e206.alcoholic.global.auth.jwt;
 
-import com.e206.alcoholic.global.auth.service.AuthService;
+import com.e206.alcoholic.domain.user.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 
@@ -21,7 +19,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
-    private final AuthService authService;
+    //    private final AuthService authService;
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -32,13 +30,16 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = extractToken(request); // HTTP 요청에서 JWT 토큰 추출
 
             if (token != null) {
-                if (isValidToken(token)) {  // 토큰이 유효한 경우
-                    String username = jwtUtil.getUsername(token); // 토큰에서 사용자 이름 추출
-                    UserDetails userDetails = authService.loadUserByUsername(username); // 사용자 정보 로드
+                if (isValidToken(token)) {
+                    CustomUserDetails customUserDetails = CustomUserDetails.builder()
+                            .userId(jwtUtil.getUserId(token))
+                            .username(jwtUtil.getUsername(token))
+                            .build();
+
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails,
+                            customUserDetails,
                             null,
-                            userDetails.getAuthorities()
+                            customUserDetails.getAuthorities()
                     );
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {

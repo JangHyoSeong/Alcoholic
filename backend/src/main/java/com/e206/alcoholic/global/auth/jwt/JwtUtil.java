@@ -1,4 +1,3 @@
-// JwtUtil.java
 package com.e206.alcoholic.global.auth.jwt;
 
 import io.jsonwebtoken.Jwts;
@@ -10,7 +9,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-@Component // Spring Been 등록
+@Component
 public class JwtUtil {
     private final SecretKey secretKey;
 
@@ -22,10 +21,12 @@ public class JwtUtil {
     }
 
     // JWT 토큰 생성
-    public String createJwt(String username, Long expiredMs) {
+    public String createJwt(String username, Integer userId, String nickname, Long expiredMs) {
         return Jwts.builder()
-                .subject(username) // 토큰 제목(사용자 식별자)
-                .issuedAt(new Date()) // 토큰 발행 시간
+                .claim("username", username)
+                .claim("id", userId)
+                .claim("nickname", nickname)
+                .issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시간
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))  // 만료 시간
                 .signWith(secretKey) // 비밀키로 서명
                 .compact(); // 토큰 생성
@@ -34,11 +35,20 @@ public class JwtUtil {
     // 토큰에서 사용자 이름 추출
     public String getUsername(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey) // 비밀키로 검증
+                .verifyWith(secretKey)
                 .build()
-                .parseSignedClaims(token) // 서명된 토큰 파싱
-                .getPayload() // 페이로드 추출
-                .getSubject(); // subject(username) 추출
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("username", String.class);
+    }
+
+    public Integer getUserId(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("id", Integer.class);
     }
 
     // 토큰 만료 여부 확인
