@@ -1,4 +1,3 @@
-// NicknameRequestDto.java
 package com.e206.alcoholic.domain.user.dto.request;
 
 import lombok.Getter;
