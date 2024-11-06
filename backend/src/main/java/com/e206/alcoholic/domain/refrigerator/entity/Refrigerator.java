@@ -1,10 +1,14 @@
 package com.e206.alcoholic.domain.refrigerator.entity;
 
+import com.e206.alcoholic.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,22 +23,45 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Refrigerator {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가 전략 사용
-    private int id; // 냉장고 ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(nullable = false)
-    private int userId; // 냉장고 소유자 ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
+    private String name;
 
-    @Column(nullable = false)
-    private String name; // 냉장고 이름
+    @Column(nullable = false, unique = true)
+    private String serialNumber;
+    private Boolean isMain;
 
-    @Column(nullable = false)
-    private String serialNumber; // 냉장고 시리얼 번호
+    public static Refrigerator of(String name, String serialNumber, User user) {
+        Refrigerator refrigerator = Refrigerator.builder()
+                .name(name)
+                .serialNumber(serialNumber)
+                .build();
+        if (user != null) {
+            addUser(refrigerator, user);
+        }
+        return refrigerator;
+    }
 
-    @Column(nullable = false)
-    private boolean isMain; // 메인 냉장고 여부
+    private static void addUser(Refrigerator refrigerator, User user) {
+        if (refrigerator.user == null) {
+            refrigerator.user = user;
+            user.addRefrigerator(refrigerator);
+        }
+    }
 
-    public void updateName(String name) {    // 냉장고 이름 업데이트 메소드
+    public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateIsMain(Boolean isMain) {
+        this.isMain = isMain;
+    }
+
+    public void assignUser(User user) {
+        this.user = user;
     }
 }

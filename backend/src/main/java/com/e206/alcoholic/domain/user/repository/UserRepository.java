@@ -1,4 +1,3 @@
-// UserRepository.java
 package com.e206.alcoholic.domain.user.repository;
 
 import com.e206.alcoholic.domain.user.entity.User;

@@ -1,4 +1,3 @@
-// LoginRequestDto.java
 package com.e206.alcoholic.global.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;

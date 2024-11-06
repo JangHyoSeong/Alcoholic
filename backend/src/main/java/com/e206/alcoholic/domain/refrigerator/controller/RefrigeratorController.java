@@ -1,48 +1,51 @@
-// RefrigeratorController.java
 package com.e206.alcoholic.domain.refrigerator.controller;
 
-import com.e206.alcoholic.domain.refrigerator.dto.request.CreateRequestDto;
-import com.e206.alcoholic.domain.refrigerator.dto.response.ListResponseDto;
-import com.e206.alcoholic.domain.refrigerator.dto.request.UpdateRequestDto;
+import com.e206.alcoholic.domain.refrigerator.dto.request.RefrigeratorCreateRequestDto;
+import com.e206.alcoholic.domain.refrigerator.dto.request.RefrigeratorUpdateRequestDto;
+import com.e206.alcoholic.domain.refrigerator.dto.response.RefrigeratorListResponseDto;
 import com.e206.alcoholic.domain.refrigerator.service.RefrigeratorService;
+import com.e206.alcoholic.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-// 냉장고 API를 처리하는 컨트롤러
 @RestController
 @RequestMapping("/api/v1/refrigerators")
 @RequiredArgsConstructor
 public class RefrigeratorController {
-    // 냉장고 관련 비즈니스 로직을 처리하는 서비스 객체
     private final RefrigeratorService refrigeratorService;
 
-    // 냉장고 조회 API
     @GetMapping
-    public ResponseEntity<ListResponseDto> getRefrigerators() {
+    public ResponseEntity<RefrigeratorListResponseDto> getRefrigerators() {
         return ResponseEntity.ok(refrigeratorService.getRefrigerators());
     }
 
-    // 냉장고 등록 API
     @PostMapping
-    public ResponseEntity<Void> createRefrigerator(@RequestBody CreateRequestDto request) {
-        refrigeratorService.createRefrigerator(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CommonResponse> createRefrigerator(@RequestBody RefrigeratorCreateRequestDto request) {
+        return ResponseEntity.ok(refrigeratorService.createRefrigerator(request));
     }
 
-    // 냉장고 삭제 API
+    @PostMapping("/connect")
+    public ResponseEntity<CommonResponse> connectRefrigerator(@RequestBody RefrigeratorCreateRequestDto request) {
+        return ResponseEntity.ok(refrigeratorService.connectRefrigerator(request));
+    }
+
     @DeleteMapping("/{refrigeratorId}")
-    public ResponseEntity<Void> deleteRefrigerator(@PathVariable int refrigeratorId) {
-        refrigeratorService.deleteRefrigerator(refrigeratorId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CommonResponse> deleteRefrigerator(@PathVariable Integer refrigeratorId) {
+        return ResponseEntity.ok(refrigeratorService.deleteRefrigerator(refrigeratorId));
     }
 
-    // 냉장고 이름 수정 API
     @PatchMapping("/{refrigeratorId}")
-    public ResponseEntity<Void> updateRefrigeratorName(
+    public ResponseEntity<CommonResponse> updateRefrigeratorName(
             @PathVariable int refrigeratorId,
-            @RequestBody UpdateRequestDto request) {
-        refrigeratorService.updateRefrigeratorName(refrigeratorId, request);
-        return ResponseEntity.ok().build();
+            @RequestBody RefrigeratorUpdateRequestDto requestDto) {
+        return ResponseEntity.ok(refrigeratorService.updateRefrigeratorName(refrigeratorId, requestDto));
     }
 }
