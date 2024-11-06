@@ -21,7 +21,7 @@ const MypageForm = () => {
     try {
       const response = await patchUserInfo(token, newNickname)
       if (response) {
-        setNickname(response.nickname)
+        setNickname(newNickname)
       }
     } catch (error) {
       console.error('닉변 실패', error)
