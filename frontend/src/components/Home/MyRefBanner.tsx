@@ -7,14 +7,14 @@ import refImage from '@/assets/ref.png'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { StorageStackParamList } from '@/navigations/stack/StorageStackNavigator';
-import { MyStorageNavigations } from '@/constants';
+import { MyStorageNavigations, mainNavigations } from '@/constants';
 import { useUserStore } from '@/state/useUserStore';
 
 const MyRefBanner = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StorageStackParamList>>()
 
   const handlePress = () => {
-    navigation.navigate(MyStorageNavigations.STORAGE_HOME)
+    navigation.navigate(mainNavigations.MYSTORAGE, {screen: MyStorageNavigations.STORAGE_HOME})
   }
   const isRef = useUserStore((state) => state.isRef)
 

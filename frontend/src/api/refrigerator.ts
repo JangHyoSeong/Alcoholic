@@ -8,7 +8,7 @@ export interface Ref {
 
 const addRef = async (token: string, serialNumber: string): Promise<Ref | void> => {
   try {
-    const response = await axiosInstance.post('/refrigerators', {
+    const response = await axiosInstance.post('/refrigerators/connect', {
       serialNumber
     },
       {

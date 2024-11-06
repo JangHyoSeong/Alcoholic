@@ -8,17 +8,18 @@ import { useNavigation } from '@react-navigation/native';
 import { RecoStackParamList } from '@/navigations/stack/RecoStackNavigator';
 import { RecipeNavigations, RecommendNavigations } from '@/constants';
 import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
+import { mainNavigations } from '@/constants';
 
 const RecoBanner = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RecoStackParamList>>()
   const navigation_2 = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>()
 
   const handleRecoPress = () => {
-    navigation.navigate(RecommendNavigations.RECO_HOME)
+    navigation.navigate(mainNavigations.RECOMMEND, {screen: RecommendNavigations.RECO_HOME})
   }
 
   const handleRecipePress = () => {
-    navigation_2.navigate(RecipeNavigations.RECIPE_HOME)
+    navigation_2.navigate(mainNavigations.RECIPE, {screen: RecipeNavigations.RECIPE_HOME})
   }
 
   return (
