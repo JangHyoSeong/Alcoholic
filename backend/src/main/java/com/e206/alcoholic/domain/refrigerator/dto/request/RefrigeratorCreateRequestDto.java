@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CreateRequestDto {
-    private String serialNumber; // 냉장고 시리얼 번호
+@NoArgsConstructor
+public class RefrigeratorCreateRequestDto {
+    private String serialNumber;
 }

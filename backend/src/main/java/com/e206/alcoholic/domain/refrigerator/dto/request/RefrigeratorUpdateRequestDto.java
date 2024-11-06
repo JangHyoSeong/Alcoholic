@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateRequestDto {
-    private String name; // 변경할 냉장고 이름
+public class RefrigeratorUpdateRequestDto {
+    private String name;
 }

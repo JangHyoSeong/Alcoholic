@@ -1,17 +1,22 @@
 package com.e206.alcoholic.domain.user.entity;
 
+import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
 import com.e206.alcoholic.global.auth.dto.SignUpDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,12 +39,20 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user", orphanRemoval = false)
+    private List<Refrigerator> refrigerators = new ArrayList<>();
+
     public static User ToUserFromSignUpRequestDto(SignUpDto signUpDto) {
         return User.builder()
                 .username(signUpDto.getUsername())
                 .password(signUpDto.getPassword())
                 .nickname(signUpDto.getNickname())
                 .build();
+    }
+
+    public void addRefrigerator(Refrigerator refrigerator) {
+        refrigerators.add(refrigerator);
     }
 
     public void updateNickname(String nickname) {
