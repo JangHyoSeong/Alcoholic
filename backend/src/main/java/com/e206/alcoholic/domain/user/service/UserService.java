@@ -11,7 +11,6 @@ import com.e206.alcoholic.global.error.ErrorCode;
 import com.e206.alcoholic.global.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,7 +45,7 @@ public class UserService implements UserDetailsService {
         user.updateNickname(requestDto.getNickname());
         userRepository.save(user);
 
-        return new CommonResponse(HttpStatus.OK, "ok");
+        return new CommonResponse("ok");
     }
 
     @Override

@@ -14,7 +14,6 @@ import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
 import com.e206.alcoholic.global.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +54,7 @@ public class RefrigeratorService {
 
         Refrigerator refrigerator = Refrigerator.of(null, requestDto.getSerialNumber(), null);
         refrigeratorRepository.save(refrigerator);
-        return new CommonResponse(HttpStatus.CREATED, "ok");
+        return new CommonResponse("ok");
     }
 
     // 냉장고-유저 연결
@@ -74,7 +73,7 @@ public class RefrigeratorService {
         refrigerator.updateName(String.format("술장고 %d", arrLength + 1));
         refrigerator.assignUser(user);
 
-        return new CommonResponse(HttpStatus.CREATED, "ok");
+        return new CommonResponse("ok");
     }
 
     // 냉장고 삭제
@@ -99,7 +98,7 @@ public class RefrigeratorService {
         refrigerator.updateName(null);
         refrigerator.assignUser(null);
 
-        return new CommonResponse(HttpStatus.OK, "ok");
+        return new CommonResponse("ok");
     }
 
     // 냉장고 이름 수정
@@ -115,6 +114,6 @@ public class RefrigeratorService {
         }
 
         refrigerator.updateName(request.getName());
-        return new CommonResponse(HttpStatus.OK, "ok");
+        return new CommonResponse("ok");
     }
 }

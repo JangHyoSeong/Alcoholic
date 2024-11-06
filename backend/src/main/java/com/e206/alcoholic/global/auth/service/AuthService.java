@@ -9,7 +9,6 @@ import com.e206.alcoholic.global.common.CommonResponse;
 import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +40,6 @@ public class AuthService {
 
     public CommonResponse login() {
 
-        return new CommonResponse(HttpStatus.CREATED, "ok");
+        return new CommonResponse("ok");
     }
 }
