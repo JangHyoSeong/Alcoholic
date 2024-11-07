@@ -1,9 +1,9 @@
-package com.e206.alcoholic.domain.drinks.service;
+package com.e206.alcoholic.domain.drink.service;
 
-import com.e206.alcoholic.domain.drinks.dto.DrinkDetailResponseDto;
-import com.e206.alcoholic.domain.drinks.dto.DrinkListResponseDto;
-import com.e206.alcoholic.domain.drinks.entity.Drink;
-import com.e206.alcoholic.domain.drinks.repository.DrinkRepository;
+import com.e206.alcoholic.domain.drink.dto.DrinkDetailResponseDto;
+import com.e206.alcoholic.domain.drink.dto.DrinkListResponseDto;
+import com.e206.alcoholic.domain.drink.entity.Drink;
+import com.e206.alcoholic.domain.drink.repository.DrinkRepository;
 import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
