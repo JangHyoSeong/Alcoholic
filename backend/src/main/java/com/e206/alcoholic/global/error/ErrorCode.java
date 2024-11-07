@@ -23,6 +23,8 @@ public enum ErrorCode {
     USER_NOT_FOUND("존재하지 않는 아이디입니다."),
     REFRIGERATOR_NOT_FOUND("존재하지 않는 냉장고입니다."),
     DRINK_NOT_FOUND("해당 ID의 술을 찾을 수 없습니다."),
+    STOCK_NOT_FOUND("해당 ID의 재고가 없습니다"),
+    STOCK_NOT_IN_USER_REFRIGERATORS("본인이 보유하지 않은 술입니다."),
 
     /* 405 Method Not Allowed: HTTP 메서드 관련 */
     METHOD_NOT_ALLOWED("잘못된 HTTP 메서드입니다."),
@@ -36,7 +38,10 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR("서버 내부 오류가 발생했습니다."),
 
     /* Custom Error: 특정 비즈니스 로직 관련 에러 */
-    MAIN_REFRIGERATOR_DELETE_DENIED("메인 냉장고는 삭제할 수 없습니다.");
+    MAIN_REFRIGERATOR_DELETE_DENIED("메인 냉장고는 삭제할 수 없습니다."),
+
+    /* AWS S3 관련 에러  */
+    IMAGE_UPLOAD_ERROR("이미지가 존재하지 않습니다");
 
     private String message;
 }
