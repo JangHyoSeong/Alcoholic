@@ -18,11 +18,10 @@ public class S3ImageService {
     private final AmazonS3 amazonS3;
 
     @Value("${AWS_BUCKET_NAME}")
-    private final String bucketName;
+    private String bucketName;
 
-    public S3ImageService(AmazonS3 amazonS3, @Value("${AWS_BUCKET_NAME}") String bucket) {
+    public S3ImageService(AmazonS3 amazonS3) {
         this.amazonS3 = amazonS3;
-        this.bucketName = bucket;
     }
 
     @Transactional
