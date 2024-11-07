@@ -1,6 +1,5 @@
 import tw from 'twrnc';
 import { View, ImageBackground } from 'react-native';
-import CustomFont from '../common/CustomFont';
 import mypagebanner from '@/assets/mypagebanner.png'
 import MyProfile from './MyProfile';
 

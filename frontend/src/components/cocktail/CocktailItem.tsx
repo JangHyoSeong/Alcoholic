@@ -1,0 +1,55 @@
+import React from 'react';
+import tw from 'twrnc';
+import { SafeAreaView, View, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import CustomFont from '../common/CustomFont';
+import please from '@/assets/pleaseregi.png';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import { colors } from '@/constants';
+
+interface CocktailData {
+  id: number;
+  enCocktailName: string;
+  krCocktailName: string;
+  image: string;
+  instruction: string;
+}
+
+interface CocktailItemProps {
+  cocktailData: CocktailData[];
+  onLoadMore: () => void;
+  isFetching: boolean;
+}
+
+const CocktailItem: React.FC<CocktailItemProps> = ({ cocktailData, onLoadMore, isFetching }) => {
+  const renderItem = ({ item }: { item: CocktailData }) => (
+    <View key={item.id} style={[tw`flex flex-row bg-purple-200 
+    mb-4 rounded-lg mx-2 items-center`, {elevation: 3}]}>
+      <Image
+        source={item.image ? { uri: item.image } : please}
+        style={[tw`rounded-md`, { width: 100, height: 100 }]}
+      />
+      <View style={tw`flex flex-col w-2/3`}>
+        <CustomFont style={tw`pl-7 pb-2 text-[20px]`} fontWeight="bold">{item.krCocktailName}</CustomFont>
+        <CustomFont style={tw`pl-7 pb-2 text-gray-400 text-[17px] `}>{item.enCocktailName}</CustomFont>
+      </View>
+      <TouchableOpacity>
+        <Ionicons name={'arrow-forward-circle'} size={27} color={colors.PURPLE.BASE}/>
+      </TouchableOpacity>
+    </View>
+  );
+  
+  return (
+    <SafeAreaView>
+      <FlatList
+        data={cocktailData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        onEndReached={onLoadMore} // 스크롤 끝에 도달 시 데이터 불러오기
+        ListFooterComponent={isFetching ? <ActivityIndicator size="small" color="#0000ff" /> : null}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      />
+    </SafeAreaView>
+  );
+};
+
+export default CocktailItem;
