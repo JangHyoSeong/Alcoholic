@@ -1,7 +1,7 @@
 package com.e206.alcoholic.domain.stock.service;
 
-import com.e206.alcoholic.domain.drinks.entity.Drink;
-import com.e206.alcoholic.domain.drinks.repository.DrinkRepository;
+import com.e206.alcoholic.domain.drink.entity.Drink;
+import com.e206.alcoholic.domain.drink.repository.DrinkRepository;
 import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
 import com.e206.alcoholic.domain.refrigerator.repository.RefrigeratorRepository;
 import com.e206.alcoholic.domain.refrigerator.service.RefrigeratorService;

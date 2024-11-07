@@ -1,6 +1,6 @@
 package com.e206.alcoholic.domain.stock.entity;
 
-import com.e206.alcoholic.domain.drinks.entity.Drink;
+import com.e206.alcoholic.domain.drink.entity.Drink;
 import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
