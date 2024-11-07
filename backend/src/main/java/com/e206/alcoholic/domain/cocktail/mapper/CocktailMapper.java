@@ -1,11 +1,9 @@
 package com.e206.alcoholic.domain.cocktail.mapper;
 
-import com.e206.alcoholic.domain.cocktail.dto.CocktailDetailResponseDto;
-import com.e206.alcoholic.domain.cocktail.dto.CocktailListResponseDto;
+import com.e206.alcoholic.domain.cocktail.dto.response.CocktailDetailResponseDto;
+import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
 import com.e206.alcoholic.domain.cocktail.entity.Cocktail;
 import com.e206.alcoholic.domain.ingredient.mapper.IngredientMapper;
-
-import java.util.stream.Collectors;
 
 public class CocktailMapper {
     // Cocktail 엔티티를 상세 정보 DTO로 변환하는 메서드
@@ -19,7 +17,7 @@ public class CocktailMapper {
                 // 칵테일에 포함된 재료들을 DTO로 변환하여 리스트로 수집
                 .ingredients(cocktail.getIngredients().stream()
                         .map(IngredientMapper::toDto)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build();
     }
 
