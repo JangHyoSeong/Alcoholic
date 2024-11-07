@@ -1,6 +1,6 @@
-package com.e206.alcoholic.domain.drinks.repository;
+package com.e206.alcoholic.domain.drink.repository;
 
-import com.e206.alcoholic.domain.drinks.entity.Drink;
+import com.e206.alcoholic.domain.drink.entity.Drink;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

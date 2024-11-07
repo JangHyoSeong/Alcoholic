@@ -1,6 +1,5 @@
-package com.e206.alcoholic.domain.drinks.entity;
+package com.e206.alcoholic.domain.drink.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;

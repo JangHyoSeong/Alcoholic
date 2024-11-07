@@ -21,10 +21,11 @@ public enum ErrorCode {
     /* 404 Not Found: 리소스를 찾을 수 없는 경우 */
     RESOURCE_NOT_FOUND("요청한 리소스를 찾을 수 없습니다."),
     USER_NOT_FOUND("존재하지 않는 아이디입니다."),
-    REFRIGERATOR_NOT_FOUND("존재하지 않는 냉장고입니다."),
     DRINK_NOT_FOUND("해당 ID의 술을 찾을 수 없습니다."),
     STOCK_NOT_FOUND("해당 ID의 재고가 없습니다"),
     STOCK_NOT_IN_USER_REFRIGERATORS("본인이 보유하지 않은 술입니다."),
+    REFRIGERATOR_NOT_FOUND("존재하지 않는 냉장고입니다."),
+    COCKTAIL_NOT_FOUND("칵테일이 존재하지 않습니다."),
 
     /* 405 Method Not Allowed: HTTP 메서드 관련 */
     METHOD_NOT_ALLOWED("잘못된 HTTP 메서드입니다."),

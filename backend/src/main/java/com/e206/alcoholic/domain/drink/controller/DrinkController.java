@@ -1,8 +1,8 @@
-package com.e206.alcoholic.domain.drinks.controller;
+package com.e206.alcoholic.domain.drink.controller;
 
-import com.e206.alcoholic.domain.drinks.dto.DrinkDetailResponseDto;
-import com.e206.alcoholic.domain.drinks.dto.DrinkListResponseDto;
-import com.e206.alcoholic.domain.drinks.service.DrinkService;
+import com.e206.alcoholic.domain.drink.dto.DrinkDetailResponseDto;
+import com.e206.alcoholic.domain.drink.dto.DrinkListResponseDto;
+import com.e206.alcoholic.domain.drink.service.DrinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
