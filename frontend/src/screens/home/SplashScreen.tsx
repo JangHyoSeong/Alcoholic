@@ -66,7 +66,7 @@ const SplashScreenBlock = styled.View`
 
 const LogoImageBlock = styled(Animated.Image)`
 marginTop: 50px;
-marginLeft: 50px;
+marginLeft: 30px;
 width: 150px;
 height: 150px;
 resizeMode: 'contain';
