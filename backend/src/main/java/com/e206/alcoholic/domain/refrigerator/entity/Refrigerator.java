@@ -1,6 +1,8 @@
 package com.e206.alcoholic.domain.refrigerator.entity;
 
+import com.e206.alcoholic.domain.stock.entity.DrinkStock;
 import com.e206.alcoholic.domain.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,11 +11,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "refrigerators")
@@ -34,6 +40,10 @@ public class Refrigerator {
     @Column(nullable = false, unique = true)
     private String serialNumber;
     private Boolean isMain;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "refrigerator", cascade = CascadeType.PERSIST)
+    private List<DrinkStock> drinkStocks = new ArrayList<>();
 
     public static Refrigerator of(String name, String serialNumber, User user) {
         Refrigerator refrigerator = Refrigerator.builder()
@@ -63,5 +73,9 @@ public class Refrigerator {
 
     public void assignUser(User user) {
         this.user = user;
+    }
+
+    public void addDrinkStock(DrinkStock drinkStock) {
+        drinkStocks.add(drinkStock);
     }
 }

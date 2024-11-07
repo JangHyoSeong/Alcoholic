@@ -8,7 +8,6 @@ import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
 import com.e206.alcoholic.domain.refrigerator.repository.RefrigeratorRepository;
 import com.e206.alcoholic.domain.user.dto.CustomUserDetails;
 import com.e206.alcoholic.domain.user.entity.User;
-import com.e206.alcoholic.domain.user.service.UserService;
 import com.e206.alcoholic.global.common.CommonResponse;
 import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
@@ -24,7 +23,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class RefrigeratorService {
     private final RefrigeratorRepository refrigeratorRepository;
-    private final UserService userService;
     private final AuthUtil authUtil;
 
     // 현재 로그인한 사용자의 모든 냉장고 목록을 조회
@@ -116,4 +114,16 @@ public class RefrigeratorService {
         refrigerator.updateName(request.getName());
         return new CommonResponse("ok");
     }
+
+    @Transactional
+    public Refrigerator getRefrigerator(Integer refrigeratorId, Integer userId) {
+        Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
+
+        if (refrigerator.getUser() == null || !refrigerator.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND);
+        }
+        return refrigerator;
+    }
+
 }
