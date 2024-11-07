@@ -1,6 +1,6 @@
-package com.e206.alcoholic.domain.drinks.repository;
+package com.e206.alcoholic.domain.drink.repository;
 
-import com.e206.alcoholic.domain.drinks.entity.Drink;
+import com.e206.alcoholic.domain.drink.entity.Drink;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // 술 정보에 대한 데이터베이스 접근을 담당하는 레포지토리

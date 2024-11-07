@@ -1,6 +1,6 @@
-package com.e206.alcoholic.domain.drinks.dto;
+package com.e206.alcoholic.domain.drink.dto;
 
-import com.e206.alcoholic.domain.drinks.entity.Drink;
+import com.e206.alcoholic.domain.drink.entity.Drink;
 import lombok.Builder;
 import lombok.Getter;
 
