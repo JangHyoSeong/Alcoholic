@@ -17,7 +17,7 @@ public class S3ImageService {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${AWS_BUCKET_NAME}")
+    @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
 
     public S3ImageService(AmazonS3 amazonS3) {
