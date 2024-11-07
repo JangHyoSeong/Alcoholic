@@ -1,4 +1,4 @@
-package com.e206.alcoholic.domain.cocktail.dto;
+package com.e206.alcoholic.domain.cocktail.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

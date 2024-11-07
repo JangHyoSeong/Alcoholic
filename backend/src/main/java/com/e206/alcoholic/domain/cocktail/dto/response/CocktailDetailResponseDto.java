@@ -1,4 +1,4 @@
-package com.e206.alcoholic.domain.cocktail.dto;
+package com.e206.alcoholic.domain.cocktail.dto.response;
 
 import com.e206.alcoholic.domain.ingredient.dto.IngredientDto;
 import lombok.AccessLevel;
