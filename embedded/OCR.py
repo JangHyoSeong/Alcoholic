@@ -87,6 +87,12 @@ def extract_text_from_result(result):
 
 def run_ocr():
     image_path = "captured_image.jpg"
+
+    # 파일 존재 여부 확인
+    if not os.path.exists(image_path):
+        print("Image file does not exist. Exiting OCR process.")
+        return None
+        
     capture_image(image_path)
 
     text = call_ocr_api(image_path)
@@ -95,8 +101,10 @@ def run_ocr():
         product_data = productList.get_products()
 
         matched_product, similarity_score = search.find_most_similar_product(text, product_data)
-        for product in matched_product:
-            print(f"best product: {product}, similarity: {similarity_score:.2f}")
+        # for product in matched_product:
+        #     # print(f"best product: {product}, similarity: {similarity_score:.2f}")
+        #     print(f"best product: {product}")
+        return matched_product
     else:
         print("text make fail")
         
