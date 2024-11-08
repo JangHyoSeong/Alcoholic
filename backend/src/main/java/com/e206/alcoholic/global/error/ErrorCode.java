@@ -34,6 +34,9 @@ public enum ErrorCode {
     /* 칵테일 */
     COCKTAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "칵테일이 존재하지 않습니다."),
 
+    /* 카테고리 */
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리가 존재하지 않습니다."),
+
     /* AWS S3 관련 에러  */
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "이미지가 존재하지 않습니다");
 
