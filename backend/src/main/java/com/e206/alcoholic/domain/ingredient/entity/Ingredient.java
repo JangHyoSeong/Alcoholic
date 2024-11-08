@@ -1,6 +1,6 @@
 package com.e206.alcoholic.domain.ingredient.entity;
 
-import com.e206.alcoholic.domain.category.Category;
+import com.e206.alcoholic.domain.category.entity.Category;
 import com.e206.alcoholic.domain.cocktail.entity.Cocktail;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,4 +35,19 @@ public class Ingredient {
 
     private String ingredient; // 재료명
     private String measure; // 재료의 양
+
+    @Builder
+    public Ingredient(Category categoryId, String ingredient, String measure) {
+        this.categoryId = categoryId;
+        this.ingredient = ingredient;
+        this.measure = measure;
+    }
+
+    // 연관관계 메서드
+    public void addCocktail(Cocktail cocktail) {
+        this.cocktailId = cocktail;
+        if (!cocktail.getIngredients().contains(this)) {
+            cocktail.getIngredients().add(this);
+        }
+    }
 }

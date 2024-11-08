@@ -1,5 +1,6 @@
 package com.e206.alcoholic.domain.cocktail.controller;
 
+import com.e206.alcoholic.domain.cocktail.dto.request.CocktailCreateRequestDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailDetailResponseDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
 import com.e206.alcoholic.domain.cocktail.service.CocktailService;
@@ -7,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +38,11 @@ public class CocktailController {
     @GetMapping("/search")
     public ResponseEntity<List<CocktailListResponseDto>> searchCocktails(@RequestParam String name) {
         return ResponseEntity.ok(cocktailService.searchCocktails(name));
+    }
+
+    // 커스텀 칵테일 등록
+    @PostMapping
+    public ResponseEntity<CocktailDetailResponseDto> createCocktail(@RequestBody CocktailCreateRequestDto requestDto) {
+        return ResponseEntity.ok(cocktailService.createCocktail(requestDto));
     }
 }
