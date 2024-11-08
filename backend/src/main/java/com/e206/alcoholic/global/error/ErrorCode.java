@@ -26,6 +26,7 @@ public enum ErrorCode {
     STOCK_NOT_IN_USER_REFRIGERATORS("본인이 보유하지 않은 술입니다."),
     REFRIGERATOR_NOT_FOUND("존재하지 않는 냉장고입니다."),
     COCKTAIL_NOT_FOUND("칵테일이 존재하지 않습니다."),
+    CATEGORY_NOT_FOUND("카테고리가 존재하지 않습니다"),
 
     /* 405 Method Not Allowed: HTTP 메서드 관련 */
     METHOD_NOT_ALLOWED("잘못된 HTTP 메서드입니다."),

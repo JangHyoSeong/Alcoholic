@@ -1,6 +1,8 @@
 package com.e206.alcoholic.domain.cocktail.service;
 
-import com.e206.alcoholic.domain.category.Category;
+import com.e206.alcoholic.domain.category.entity.Category;
+import com.e206.alcoholic.domain.category.repository.CategoryRepository;
+import com.e206.alcoholic.domain.cocktail.dto.request.CocktailCreateRequestDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailDetailResponseDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
 import com.e206.alcoholic.domain.cocktail.entity.Cocktail;
@@ -13,14 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CocktailService {
     private final CocktailRepository cocktailRepository;
+    private final CategoryRepository categoryRepository;
 
     // 전체 칵테일 목록 조회
     public List<CocktailListResponseDto> getAllCocktails() {
@@ -41,5 +44,39 @@ public class CocktailService {
         return cocktailRepository.findByNameContaining(name).stream()
                 .map(CocktailMapper::toCocktailListDto)
                 .toList();
+    }
+
+    @Transactional
+    public CocktailDetailResponseDto createCocktail(CocktailCreateRequestDto requestDto) {
+        // 카테고리 조회 및 재료 엔티티 생성
+        List<Ingredient> ingredients = requestDto.getIngredients().stream()
+                .map(ingredientDto -> {
+                    Category category = categoryRepository.findById(ingredientDto.getCategoryId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+
+                    return Ingredient.builder()
+                            .categoryId(category)
+                            .ingredient(ingredientDto.getIngredient())
+                            .measure(ingredientDto.getMeasure())
+                            .build();
+                })
+                .toList();
+
+        // 칵테일 엔티티 생성
+        Cocktail cocktail = new Cocktail(
+                requestDto.getEnCocktailName(),
+                requestDto.getKrCocktailName(),
+                requestDto.getImage(),
+                requestDto.getInstruction(),
+                requestDto.getUserId(),
+                new ArrayList<>()
+        );
+
+        // 양방향 연관관계 설정
+        ingredients.forEach(ingredient -> ingredient.addCocktail(cocktail));
+
+        // 저장 및 응답 반환
+        Cocktail savedCocktail = cocktailRepository.save(cocktail);
+        return CocktailMapper.toCocktailDetailDto(savedCocktail);
     }
 }
