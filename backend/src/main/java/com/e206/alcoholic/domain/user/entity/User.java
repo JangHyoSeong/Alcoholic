@@ -1,5 +1,6 @@
 package com.e206.alcoholic.domain.user.entity;
 
+import com.e206.alcoholic.domain.cocktail.entity.Cocktail;
 import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
 import com.e206.alcoholic.global.auth.dto.SignUpDto;
 import jakarta.persistence.Column;
@@ -43,7 +44,11 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = false)
     private List<Refrigerator> refrigerators = new ArrayList<>();
 
-    public static User ToUserFromSignUpRequestDto(SignUpDto signUpDto) {
+    @Builder.Default
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<Cocktail> cocktails = new ArrayList<>();
+
+    public static User toUserFromSignUpRequestDto(SignUpDto signUpDto) {
         return User.builder()
                 .username(signUpDto.getUsername())
                 .password(signUpDto.getPassword())
@@ -53,6 +58,10 @@ public class User {
 
     public void addRefrigerator(Refrigerator refrigerator) {
         refrigerators.add(refrigerator);
+    }
+
+    public void addCocktails(Cocktail cocktail) {
+        cocktails.add(cocktail);
     }
 
     public void updateNickname(String nickname) {
