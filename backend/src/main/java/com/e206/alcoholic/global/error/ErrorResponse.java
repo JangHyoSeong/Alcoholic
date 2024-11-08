@@ -1,18 +1,34 @@
 package com.e206.alcoholic.global.error;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.validation.BindingResult;
+
+import java.util.List;
 
 @Getter
 public class ErrorResponse {
     private final String message;
+    private List<FieldError> fieldErrors;
 
-    // ErrorCode enum으로부터 에러 메시지를 받아 생성
-    public ErrorResponse(ErrorCode errorCode) {
-        this.message = errorCode.getMessage();
+    public ErrorResponse(ErrorCode errorCode, String message) {
+        this.message = message != null ? message : errorCode.getMessage();
     }
 
-    // 직접 에러 메시지를 받아 생성
-    public ErrorResponse(String message) {
-        this.message = message;
+    public void addFieldErrors(BindingResult bindingResult) {
+        fieldErrors = bindingResult.getFieldErrors()
+                .stream()
+                .map(error -> new FieldError(
+                        error.getField(),
+                        error.getDefaultMessage()))
+                .toList();
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class FieldError {
+
+        private final String field;
+        private final String message;
     }
 }
