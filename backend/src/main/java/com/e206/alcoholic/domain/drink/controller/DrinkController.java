@@ -26,4 +26,10 @@ public class DrinkController {
     public DrinkDetailResponseDto getDrinkDetail(@PathVariable Long drinkId) {
         return drinkService.getDrinkDetail(drinkId);
     }
+
+    // 카테고리별 술 목록 조회 API
+    @GetMapping("/category/{categoryId}")
+    public List<DrinkListResponseDto> getDrinksByCategory(@PathVariable Integer categoryId) {
+        return drinkService.getDrinksByCategory(categoryId);
+    }
 }
