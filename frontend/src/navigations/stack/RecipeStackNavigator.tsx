@@ -6,7 +6,7 @@ import CocktailDetail from "@/screens/recipes/CocktailDetail";
 
 export type RecipeStackParamList = {
   [RecipeNavigations.RECIPE_HOME]: undefined;
-  [RecipeNavigations.RECIPE_DETAIL]: undefined;
+  [RecipeNavigations.RECIPE_DETAIL]: {cocktailId : number;}
 }
 
 const RecipeStack = createNativeStackNavigator<RecipeStackParamList>()

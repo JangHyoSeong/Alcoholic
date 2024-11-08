@@ -5,6 +5,11 @@ import CustomFont from '../common/CustomFont';
 import please from '@/assets/pleaseregi.png';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { colors } from '@/constants';
+import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { RecipeNavigations } from '@/constants';
+
 
 interface CocktailData {
   id: number;
@@ -21,6 +26,11 @@ interface CocktailItemProps {
 }
 
 const CocktailItem: React.FC<CocktailItemProps> = ({ cocktailData, onLoadMore, isFetching }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>()
+
+  const handlePressButton = async (cocktailId: number) => {
+    navigation.navigate(RecipeNavigations.RECIPE_DETAIL, {cocktailId})
+  }
   const renderItem = ({ item }: { item: CocktailData }) => (
     <View key={item.id} style={[tw`flex flex-row bg-purple-200 
     mb-4 rounded-lg mx-2 items-center`, {elevation: 3}]}>
@@ -32,7 +42,7 @@ const CocktailItem: React.FC<CocktailItemProps> = ({ cocktailData, onLoadMore, i
         <CustomFont style={tw`pl-7 pb-2 text-[20px]`} fontWeight="bold">{item.krCocktailName}</CustomFont>
         <CustomFont style={tw`pl-7 pb-2 text-gray-400 text-[17px] `}>{item.enCocktailName}</CustomFont>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => handlePressButton(item.id)}>
         <Ionicons name={'arrow-forward-circle'} size={27} color={colors.PURPLE.BASE}/>
       </TouchableOpacity>
     </View>
