@@ -34,7 +34,7 @@ public class AuthService {
                 .build();
 
         // 회원가입 진행
-        User user = User.ToUserFromSignUpRequestDto(signUpDto);
+        User user = User.toUserFromSignUpRequestDto(signUpDto);
         return new AuthResponseDto(authRepository.save(user));
     }
 

@@ -22,10 +22,6 @@ public class S3Config {
 
     @Bean
     public AmazonS3 amazonS3() {
-        System.out.println("AWS Access Key: " + accessKey); // 디버깅용 출력
-        System.out.println("AWS Secret Key: " + secretKey);
-        System.out.println("AWS Region: " + region);
-        
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         return AmazonS3ClientBuilder
                 .standard()
