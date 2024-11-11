@@ -45,5 +45,16 @@ public class DrinkStockController {
         return ResponseEntity.ok(drinkStockService.deleteDrinkStock(stockId));
     }
 
+    @PostMapping("/admin/{refrigeratorId}")
+    public ResponseEntity<CommonResponse> adminAddDrinkStock(
+            @PathVariable Integer refrigeratorId,
+            @ModelAttribute DrinkStockAddRequestDto requestDto) {
+        return ResponseEntity.ok(drinkStockService.adminAddDrinkStock(refrigeratorId, requestDto));
+    }
+
+    @DeleteMapping("/admin/stocks/{stockId}")
+    public ResponseEntity<CommonResponse> adminDeleteDrinkStock(@PathVariable Integer stockId) {
+        return ResponseEntity.ok(drinkStockService.adminDeleteDrinkStock(stockId));
+    }
 
 }
