@@ -44,7 +44,9 @@ public class DrinkStockService {
         Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
 
-        if (refrigerator.getUser() == null || !refrigerator.getUser().getId().equals(currentUserId)) {
+        System.out.println(customUserDetails.getRole());
+        if (customUserDetails.getRole().equals("ROLE_BOARD")) {
+        } else if (refrigerator.getUser() == null || !refrigerator.getUser().getId().equals(currentUserId)) {
             throw new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND);
         }
 
@@ -133,7 +135,7 @@ public class DrinkStockService {
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
 
         Drink drink = drinkRepository.findDrinkByKrDrinkName(requestDto.getDrinkName())
-                .orElseThrow(() -> new CustomException(ErrorCode.DRINK_NOT_FOUND));
+                .orElse(null);
 
         Integer position = requestDto.getPosition();
 
