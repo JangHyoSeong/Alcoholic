@@ -2,7 +2,7 @@ import cv2
 from ultralytics import YOLO
 
 # YOLO 모델 로드
-yolo_model = YOLO('yolov8n.pt')  # YOLOv8 모델 파일 경로를 지정해야 합니다.
+yolo_model = YOLO('best.pt')  # YOLOv8 모델 파일 경로를 지정해야 합니다.
 
 def detect_bottle(image_path):
     """
