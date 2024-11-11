@@ -55,12 +55,12 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/drinks").permitAll()
-                        .requestMatchers("/api/v1/board/admin").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/**").authenticated()
-                        .anyRequest().permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/drinks").permitAll()
+//                        .requestMatchers("/api/v1/refrigerators/admin/**").hasAuthority("ROLE_BOARD")
+                                .requestMatchers("/api/v1/**").authenticated()
+                                .anyRequest().permitAll()
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil),
                         UsernamePasswordAuthenticationFilter.class)

@@ -54,6 +54,7 @@ public class User {
                 .username(signUpDto.getUsername())
                 .password(signUpDto.getPassword())
                 .nickname(signUpDto.getNickname())
+                .role(Role.USER)
                 .build();
     }
 

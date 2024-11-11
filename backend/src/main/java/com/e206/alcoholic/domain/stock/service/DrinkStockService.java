@@ -125,6 +125,12 @@ public class DrinkStockService {
 
     @Transactional
     public CommonResponse adminAddDrinkStock(Integer refrigeratorId, DrinkStockAddRequestDto requestDto) {
+        CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
+        System.out.println(customUserDetails.getRole());
+        if (!customUserDetails.getRole().equals("ROLE_BOARD")) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
         Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
 
@@ -147,6 +153,11 @@ public class DrinkStockService {
 
     @Transactional
     public CommonResponse adminDeleteDrinkStock(Integer drinkStockId) {
+        CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
+        if (!customUserDetails.getRole().equals("ROLE_BOARD")) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
         DrinkStock drinkStock = drinkStockRepository.findById(drinkStockId).orElseThrow(() -> new CustomException(ErrorCode.STOCK_NOT_FOUND));
         drinkStockRepository.delete(drinkStock);
         return new CommonResponse("deleted");
