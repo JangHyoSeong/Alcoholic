@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import tw from 'twrnc';
-import { View } from 'react-native';
+import { View, TextInput } from 'react-native';
 import CustomFont from '@/components/common/CustomFont';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import CocktailItem from '@/components/cocktail/CocktailItem';
 import { useAppStore } from '@/state/useAppStore';
-import { getCocktailList } from '@/api/cocktail';
+import { getCocktailList, searchCocktailList } from '@/api/cocktail';
 
 const ITEMS_PER_PAGE = 4
 
@@ -14,6 +15,8 @@ const CocktailSearch: React.FC = () => {
   const [displayedCocktailData, setDisplayedCocktailData] = useState([])
   const [ currentPage, setCurrentPage ] = useState(1)
   const [ isFetching, setIsFetching ] = useState(false)
+  const [ searchQuery, setSearchQuery ] = useState('')
+  const [ isSearching, setIsSearching ] = useState(false)
 
   const fetchCocktails = async () => {
     try {
@@ -28,12 +31,30 @@ const CocktailSearch: React.FC = () => {
     }
   };
 
+  const fetchSearchResults = async () => {
+    if (!searchQuery.trim()) {
+      fetchCocktails()
+      return
+    }
+    try {
+      setIsSearching(true)
+      const data = await searchCocktailList(token, searchQuery)
+      setAllCocktailData(data)
+      setDisplayedCocktailData(data.slice(0, ITEMS_PER_PAGE))
+      setCurrentPage(1)
+    } catch (error) {
+      console.error('메인 페이지 검색 실패', error)
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
   useEffect(() => {
     fetchCocktails()
   }, [])
 
   const loadMoreData = () => {
-    if (isFetching) {
+    if (isFetching || isSearching) {
       return
     }
 
@@ -50,9 +71,16 @@ const CocktailSearch: React.FC = () => {
 
   return (
       <View style={tw`flex-1`}>
-        <CustomFont style={tw`flex text-center pr-2`} fontSize={30}>
-          레시피 메인홈
-        </CustomFont>
+        <View style={tw`flex-row mb-4`}>
+          <TextInput
+            style={tw`flex-1 border opacity-50 rounded-lg p-2 border-gray-300`}
+            placeholder="칵테일 이름을 검색하세요"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={fetchSearchResults}
+          />
+          <Ionicons style={tw`absolute top-3 left-94 text-[22px]`} name='search' onPress={fetchSearchResults}/>
+        </View>
         <CocktailItem
           cocktailData={displayedCocktailData}
           onLoadMore={loadMoreData}
