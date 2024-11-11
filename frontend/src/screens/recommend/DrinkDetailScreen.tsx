@@ -53,7 +53,10 @@ const DrinkDetailScreen: React.FC = () => {
           <CustomFont style={tw`text-center text-[50px] py-2`}>{drinkDetailData.krDrinkName}<CustomFont style={tw`text-[30px] text-gray-400`}> ({drinkDetailData.enDrinkName})</CustomFont></CustomFont>
           <CustomFont style={tw`text-center text-black text-[20px] px-3`}>도수 : {drinkDetailData.alcoholDegree}</CustomFont>
         </View>
+        <View>
+          <Ionicons style={tw`text-center pb-5`} name={'beer'} size={50}/>
         <CustomFont style={tw`text-gray-500 text-[25px] px-3`}>{drinkDetailData.description}</CustomFont>
+        </View>
       </View>
     )}
     </ScrollView>

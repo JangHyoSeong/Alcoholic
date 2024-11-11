@@ -27,4 +27,18 @@ const getDrinkDetail = async (token: string, drinkId: number) => {
   }
 }
 
-export { getDrinkList, getDrinkDetail }
+const getDrinkCategory = async (token: string, categoryId: number) => {
+  try {
+    const response = await axiosInstance.get(`drinks/category/${categoryId}`,{
+      headers: {
+        Authorization: token
+      }
+    })
+    console.log('카테고리 별로 나열', response.data)
+    return response.data
+  } catch (error) {
+    console.error('카테고리 못 가져옴', error)
+  }
+}
+
+export { getDrinkList, getDrinkDetail, getDrinkCategory }
