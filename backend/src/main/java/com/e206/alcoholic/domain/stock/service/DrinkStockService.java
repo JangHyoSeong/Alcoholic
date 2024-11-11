@@ -6,6 +6,7 @@ import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
 import com.e206.alcoholic.domain.refrigerator.repository.RefrigeratorRepository;
 import com.e206.alcoholic.domain.refrigerator.service.RefrigeratorService;
 import com.e206.alcoholic.domain.stock.dto.request.DrinkStockAddRequestDto;
+import com.e206.alcoholic.domain.stock.dto.request.DrinkStockDeleteRequestDto;
 import com.e206.alcoholic.domain.stock.dto.response.DrinkStockDetailsResponseDto;
 import com.e206.alcoholic.domain.stock.dto.response.DrinkStockListResponseDto;
 import com.e206.alcoholic.domain.stock.dto.response.DrinkStockResponseDto;
@@ -152,13 +153,14 @@ public class DrinkStockService {
 
 
     @Transactional
-    public CommonResponse adminDeleteDrinkStock(Integer drinkStockId) {
+    public CommonResponse adminDeleteDrinkStock(Integer refrigeratorId, DrinkStockDeleteRequestDto requestDto) {
         CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
         if (!customUserDetails.getRole().equals("ROLE_BOARD")) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
-        DrinkStock drinkStock = drinkStockRepository.findById(drinkStockId).orElseThrow(() -> new CustomException(ErrorCode.STOCK_NOT_FOUND));
+        DrinkStock drinkStock = drinkStockRepository.findByRefrigeratorIdAndPosition(refrigeratorId, requestDto.getPosition())
+                .orElseThrow(() -> new CustomException(ErrorCode.STOCK_NOT_FOUND));
         drinkStockRepository.delete(drinkStock);
         return new CommonResponse("deleted");
     }
