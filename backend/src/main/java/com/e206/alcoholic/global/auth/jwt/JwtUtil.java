@@ -21,11 +21,12 @@ public class JwtUtil {
     }
 
     // JWT 토큰 생성
-    public String createJwt(String username, Integer userId, String nickname, Long expiredMs) {
+    public String createJwt(String username, Integer userId, String nickname, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("username", username)
                 .claim("id", userId)
                 .claim("nickname", nickname)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행 시간
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))  // 만료 시간
                 .signWith(secretKey) // 비밀키로 서명
@@ -49,6 +50,15 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .get("id", Integer.class);
+    }
+
+    public String getRole(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
     }
 
     // 토큰 만료 여부 확인

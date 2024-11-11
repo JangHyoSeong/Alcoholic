@@ -34,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     CustomUserDetails customUserDetails = CustomUserDetails.builder()
                             .userId(jwtUtil.getUserId(token))
                             .username(jwtUtil.getUsername(token))
+                            .role(jwtUtil.getRole(token))
                             .build();
 
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
