@@ -11,4 +11,7 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Integer> {
     // 칵테일 이름으로 검색 (영문, 한글 동시 검색)
     @Query("SELECT c FROM Cocktail c WHERE c.enCocktailName LIKE %:name% OR c.krCocktailName LIKE %:name%")
     List<Cocktail> findByNameContaining(@Param("name") String name);
+
+    @Query("SELECT c FROM Cocktail c ORDER BY c.value DESC")
+    List<Cocktail> findAllOrderByValueDesc();
 }

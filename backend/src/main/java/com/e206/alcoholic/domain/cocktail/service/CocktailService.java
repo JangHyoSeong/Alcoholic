@@ -103,4 +103,13 @@ public class CocktailService {
         cocktailRepository.save(cocktail);
         return new CommonResponse("created");
     }
+
+    public CocktailListResponseDto getPopularCocktails() {
+        List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository.findAllOrderByValueDesc().stream()
+                .map(CocktailMapper::toCocktailListDto)
+                .toList();
+        return CocktailListResponseDto.builder()
+                .result(cocktailResponseDtos)
+                .build();
+    }
 }

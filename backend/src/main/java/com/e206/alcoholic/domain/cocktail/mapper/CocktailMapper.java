@@ -25,6 +25,7 @@ public class CocktailMapper {
                 .id(cocktail.getId())
                 .enCocktailName(cocktail.getEnCocktailName())
                 .krCocktailName(cocktail.getKrCocktailName())
+                .value(cocktail.getValue())
                 .image(cocktail.getImage())
                 .instruction(cocktail.getInstruction())
                 .build();
