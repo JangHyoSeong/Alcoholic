@@ -14,7 +14,7 @@ const theme = {
 function App(): React.JSX.Element {
   return (
     <ThemeProvider theme={theme}>
-      <StatusBar backgroundColor={theme.colors.background} barStyle="dark-content"/>
+      <StatusBar backgroundColor={theme.colors.background} />
       <RootNavigator />
     </ThemeProvider>
   )
