@@ -1,9 +1,9 @@
 import cv2
-from tensorflow.keras.models import load_model
+import torch
+from torchvision import models, transforms
 
-# MobileNet 모델 로드
-mobilenet_model = load_model('wine_classifier.pth')  # MobileNet 모델 파일 경로를 지정해야 합니다.
-
+mobilenet_model = torch.load('wine_classifier.pth')
+mobilenet_model.eval()  # 평가 모드로 설정
 def classify_bottle(bottle_img):
     """
     MobileNet 모델을 사용하여 잘라낸 이미지의 술 종류를 분류
