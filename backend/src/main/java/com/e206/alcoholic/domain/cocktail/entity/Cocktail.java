@@ -35,6 +35,7 @@ public class Cocktail {
 
     private String enCocktailName;
     private String krCocktailName;
+    private Integer value;
     private String image;
     private String instruction;
 
