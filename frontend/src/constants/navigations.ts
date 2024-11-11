@@ -16,6 +16,8 @@ const RecommendNavigations = {
   RECO_HOME : 'RecoHome',
   POPULAR_RECO : 'PopularReco',
   MY_RECO : 'MyReco',
+  DRINK_LIST : 'DrinkList',
+  DRINK_DETAIL : 'DrinkDetail',
 } as const
 
 const MyStorageNavigations = {
