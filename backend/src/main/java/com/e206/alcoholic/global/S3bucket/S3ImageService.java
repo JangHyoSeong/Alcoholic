@@ -26,6 +26,9 @@ public class S3ImageService {
 
     @Transactional
     public String upload(MultipartFile image) {
+        if (image.isEmpty()) {
+            return null;
+        }
         String s3FileName = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
 
         ObjectMetadata objectMetadata = new ObjectMetadata();

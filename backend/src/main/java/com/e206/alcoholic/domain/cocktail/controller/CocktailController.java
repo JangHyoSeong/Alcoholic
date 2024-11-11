@@ -4,17 +4,17 @@ import com.e206.alcoholic.domain.cocktail.dto.request.CocktailCreateRequestDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailDetailResponseDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
 import com.e206.alcoholic.domain.cocktail.service.CocktailService;
+import com.e206.alcoholic.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/cocktails")
@@ -24,7 +24,7 @@ public class CocktailController {
 
     // 칵테일 목록 조회
     @GetMapping
-    public ResponseEntity<List<CocktailListResponseDto>> getAllCocktails() {
+    public ResponseEntity<CocktailListResponseDto> getAllCocktails() {
         return ResponseEntity.ok(cocktailService.getAllCocktails());
     }
 
@@ -36,13 +36,15 @@ public class CocktailController {
 
     // 칵테일 검색
     @GetMapping("/search")
-    public ResponseEntity<List<CocktailListResponseDto>> searchCocktails(@RequestParam String name) {
+    public ResponseEntity<CocktailListResponseDto> searchCocktails(@RequestParam String name) {
         return ResponseEntity.ok(cocktailService.searchCocktails(name));
     }
 
     // 커스텀 칵테일 등록
     @PostMapping
-    public ResponseEntity<CocktailDetailResponseDto> createCocktail(@RequestBody CocktailCreateRequestDto requestDto) {
-        return ResponseEntity.ok(cocktailService.createCocktail(requestDto));
+    public ResponseEntity<CommonResponse> createCocktail(
+            @RequestPart("cocktailData") CocktailCreateRequestDto requestDto,
+            @RequestPart("image") MultipartFile image) {
+        return ResponseEntity.ok(cocktailService.createCocktail(requestDto, image));
     }
 }

@@ -44,12 +44,15 @@ public class DrinkStock {
     @JoinColumn(name = "drink_id")
     private Drink drink;
 
-    public static DrinkStock of(String image, Refrigerator refrigerator, Drink drink) {
+    private String stockName;
+
+    public static DrinkStock of(String image, Refrigerator refrigerator, Drink drink, String stockName) {
         DrinkStock drinkStock = DrinkStock.builder()
                 .image(image)
                 .refrigerator(refrigerator)
                 .drink(drink)
                 .stockTime(LocalDateTime.now())
+                .stockName(stockName)
                 .build();
 
         refrigerator.addDrinkStock(drinkStock);

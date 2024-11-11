@@ -13,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,7 +25,9 @@ import java.util.List;
 @Entity
 @Table(name = "cocktails")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Cocktail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,19 +42,9 @@ public class Cocktail {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "cocktail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ingredient> ingredients = new ArrayList<>();
-
-    // 새로운 칵테일을 생성하는 생성자
-    public Cocktail(String enCocktailName, String krCocktailName, String image,
-                    String instruction, User user, List<Ingredient> ingredients) {
-        this.enCocktailName = enCocktailName;
-        this.krCocktailName = krCocktailName;
-        this.image = image;
-        this.instruction = instruction;
-        this.user = user;
-        this.ingredients = ingredients;
-    }
 
     public void addIngredients(Ingredient ingredient) {
         ingredients.add(ingredient);

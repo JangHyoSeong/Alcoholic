@@ -39,12 +39,6 @@ public class Ingredient {
     private String ingredientName;
     private String measure;
 
-    public Ingredient(Category category, String ingredientName, String measure) {
-        this.category = category;
-        this.ingredientName = ingredientName;
-        this.measure = measure;
-    }
-
     public void addCocktail(Cocktail cocktail) {
         this.cocktail = cocktail;
         if (!cocktail.getIngredients().contains(this)) {
