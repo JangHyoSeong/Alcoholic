@@ -39,8 +39,8 @@ const CocktailSearch: React.FC = () => {
     try {
       setIsSearching(true)
       const data = await searchCocktailList(token, searchQuery)
-      setAllCocktailData(data)
-      setDisplayedCocktailData(data.slice(0, ITEMS_PER_PAGE))
+      setAllCocktailData(data.result)
+      setDisplayedCocktailData(data.result.slice(0, ITEMS_PER_PAGE))
       setCurrentPage(1)
     } catch (error) {
       console.error('메인 페이지 검색 실패', error)

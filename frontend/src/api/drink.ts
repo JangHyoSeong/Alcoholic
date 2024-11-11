@@ -7,7 +7,7 @@ const getDrinkList = async (token: string) => {
         Authorization: token
       }
     })
-    return response.data
+    return response.data.result
   } catch (error) {
     console.error('api에서 술 목록 조회 실패', error)
   }
@@ -20,7 +20,6 @@ const getDrinkDetail = async (token: string, drinkId: number) => {
         Authorization: token
       }
     })
-    console.log('디테일 데이터', response.data)
     return response.data
   } catch (error) {
     console.error('술 디테일 못 가져옴', error)
@@ -34,8 +33,7 @@ const getDrinkCategory = async (token: string, categoryId: number) => {
         Authorization: token
       }
     })
-    console.log('카테고리 별로 나열', response.data)
-    return response.data
+    return response.data.result
   } catch (error) {
     console.error('카테고리 못 가져옴', error)
   }

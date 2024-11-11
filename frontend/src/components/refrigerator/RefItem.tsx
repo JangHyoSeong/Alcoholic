@@ -5,7 +5,10 @@ import CustomFont from '../common/CustomFont';
 import { delRef, patchRef } from '@/api/refrigerator';
 import { useAppStore } from '@/state/useAppStore';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { colors } from '@/constants';
+import { MyStorageNavigations, colors } from '@/constants';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StorageStackParamList } from '@/navigations/stack/StorageStackNavigator';
 
 interface RefItemProps {
   item: {
@@ -17,9 +20,14 @@ interface RefItemProps {
 }
 
 const RefItem: React.FC<RefItemProps> = ({ item, onDelete }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<StorageStackParamList>>()
   const token = useAppStore((state) => state.token); // 토큰 가져오기
   const [isEditing, setIsEditing ] = useState(false)
   const [newname, setNewname ] = useState(item.name)
+
+  const handleTouchRef = (refrigeratorId: number) => {
+    navigation.navigate(MyStorageNavigations.MYSTORAGE_DETAIL, {refrigeratorId})
+  }
 
   const handleEditing = () => {
     setIsEditing(true)
@@ -57,36 +65,36 @@ const RefItem: React.FC<RefItemProps> = ({ item, onDelete }) => {
   }
 
   return (
-    <View style={[tw`bg-gray-400 m-2 h-[200px] rounded-md overflow-hidden`, {elevation: 4}]}>
-      {isEditing ? (
-        <View style={tw`flex-row items-center`}>
-          <TextInput
-            style={tw`border border-white p-2 rounded ml-1 mr-2 flex-1 text-white`}
-            value={newname}
-            onChangeText={setNewname}
-            onBlur={handleRefnamePut} // 포커스가 벗어날 때 변경 요청
-          />
-          <TouchableOpacity onPress={handleRefnamePut}>
-            <CustomFont style={tw`pr-2 text-[purple]`} fontSize={17}>확인</CustomFont>
+    <TouchableOpacity onPress={() => handleTouchRef(item.id)} style={[tw`bg-gray-400 m-2 h-[200px] rounded-md overflow-hidden`, {elevation: 4}]}>
+        {isEditing ? (
+          <View style={tw`flex-row items-center`}>
+            <TextInput
+              style={tw`border border-white p-2 rounded ml-1 mr-2 flex-1 text-white`}
+              value={newname}
+              onChangeText={setNewname}
+              onBlur={handleRefnamePut} // 포커스가 벗어날 때 변경 요청
+            />
+            <TouchableOpacity onPress={handleRefnamePut}>
+              <CustomFont style={tw`pr-2 text-[purple]`} fontSize={17}>확인</CustomFont>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity onPress={handleEditing} style={tw`ml-1 rounded-md`}>
+            <CustomFont style={tw`text-white p-2`} fontSize={20}>
+              {item.name}
+            </CustomFont>
           </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity onPress={handleEditing} style={tw`ml-1 rounded-md`}>
-          <CustomFont style={tw`text-white p-2`} fontSize={20}>
-            {item.name}
+        )}
+        {item.main && (
+          <CustomFont style={tw`text-yellow-400 p-4`} fontSize={14}>
+            메인 술장고
           </CustomFont>
-        </TouchableOpacity>
-      )}
-      {item.main && (
-        <CustomFont style={tw`text-yellow-400 p-4`} fontSize={14}>
-          메인 술장고
-        </CustomFont>
-      )}
-      <Ionicons style={tw`absolute top-14 right-6`} name={'wine'} color={colors.PURPLE.BASE} size={45} />
-      <TouchableOpacity onPress={handleDelete} style={tw`absolute right-4 bottom-4`}>
-        <CustomFont style={tw`text-[crimson]`}>삭제하기</CustomFont>
+        )}
+        <Ionicons style={tw`absolute top-14 right-6`} name={'wine'} color={colors.PURPLE.BASE} size={45} />
+        <TouchableOpacity onPress={handleDelete} style={tw`absolute right-4 top-42`}>
+          <CustomFont style={tw`text-[crimson]`}>삭제하기</CustomFont>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
 
   );
 };
