@@ -79,7 +79,7 @@ public class DrinkStockService {
             throw new CustomException(ErrorCode.ALREADY_IN_POSITION);
         });
 
-        String imageURL = s3ImageService.upload(requestDto.getImage());
+        String imageURL = requestDto.getImage() != null ? s3ImageService.upload(requestDto.getImage()) : null;
         DrinkStock drinkStock = DrinkStock.of(imageURL, refrigerator, drink, position, requestDto.getDrinkName());
 
         drinkStockRepository.save(drinkStock);
@@ -125,7 +125,6 @@ public class DrinkStockService {
     @Transactional
     public CommonResponse adminAddDrinkStock(Integer refrigeratorId, DrinkStockAddRequestDto requestDto) {
         CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
-        System.out.println(customUserDetails.getRole());
         if (!customUserDetails.getRole().equals("ROLE_BOARD")) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
