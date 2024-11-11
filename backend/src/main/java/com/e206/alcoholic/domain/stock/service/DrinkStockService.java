@@ -71,8 +71,7 @@ public class DrinkStockService {
         CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
         Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId, customUserDetails.getUserId());
 
-        Drink drink = drinkRepository.findDrinkByKrDrinkName(requestDto.getDrinkName())
-                .orElseThrow(() -> new CustomException(ErrorCode.DRINK_NOT_FOUND));
+        Drink drink = drinkRepository.findDrinkByKrDrinkName(requestDto.getDrinkName()).orElse(null);
 
         Integer position = requestDto.getPosition();
 
@@ -81,7 +80,7 @@ public class DrinkStockService {
         });
 
         String imageURL = s3ImageService.upload(requestDto.getImage());
-        DrinkStock drinkStock = DrinkStock.of(imageURL, refrigerator, drink, position);
+        DrinkStock drinkStock = DrinkStock.of(imageURL, refrigerator, drink, position, requestDto.getDrinkName());
 
         drinkStockRepository.save(drinkStock);
         return new CommonResponse("ok");

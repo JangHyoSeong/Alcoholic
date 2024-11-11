@@ -1,7 +1,13 @@
 package com.e206.alcoholic.domain.drink.entity;
 
+import com.e206.alcoholic.domain.category.entity.Category;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 
@@ -9,11 +15,17 @@ import lombok.Getter;
 @Table(name = "drinks")
 @Getter
 public class Drink {
+
     @Id
-    private Integer id;  // 기본키
-    private Integer categoryId;  // 카테고리 ID
-    private String enDrinkName;  // 영문 주류명
-    private String krDrinkName;  // 한글 주류명
-    private Float alcoholDegree;  // 도수
-    private String description;  // 설명
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    private String enDrinkName;
+    private String krDrinkName;
+    private Float alcoholDegree;
+    private String description;
 }

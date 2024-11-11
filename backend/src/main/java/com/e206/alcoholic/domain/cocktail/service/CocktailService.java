@@ -5,17 +5,25 @@ import com.e206.alcoholic.domain.category.repository.CategoryRepository;
 import com.e206.alcoholic.domain.cocktail.dto.request.CocktailCreateRequestDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailDetailResponseDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
+import com.e206.alcoholic.domain.cocktail.dto.response.CocktailResponseDto;
 import com.e206.alcoholic.domain.cocktail.entity.Cocktail;
 import com.e206.alcoholic.domain.cocktail.mapper.CocktailMapper;
 import com.e206.alcoholic.domain.cocktail.repository.CocktailRepository;
 import com.e206.alcoholic.domain.ingredient.entity.Ingredient;
+import com.e206.alcoholic.domain.ingredient.repository.IngredientRepository;
+import com.e206.alcoholic.domain.user.dto.CustomUserDetails;
+import com.e206.alcoholic.domain.user.entity.User;
+import com.e206.alcoholic.domain.user.repository.UserRepository;
+import com.e206.alcoholic.global.S3bucket.S3ImageService;
+import com.e206.alcoholic.global.common.CommonResponse;
 import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
-import org.springframework.transaction.annotation.Transactional;
+import com.e206.alcoholic.global.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,12 +32,19 @@ import java.util.List;
 public class CocktailService {
     private final CocktailRepository cocktailRepository;
     private final CategoryRepository categoryRepository;
+    private final IngredientRepository ingredientRepository;
+    private final S3ImageService s3ImageService;
+    private final UserRepository userRepository;
 
     // 전체 칵테일 목록 조회
-    public List<CocktailListResponseDto> getAllCocktails() {
-        return cocktailRepository.findAll().stream()
+    public CocktailListResponseDto getAllCocktails() {
+        List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository.findAll().stream()
                 .map(CocktailMapper::toCocktailListDto)
                 .toList();
+
+        return CocktailListResponseDto.builder()
+                .result(cocktailResponseDtos)
+                .build();
     }
 
     // 특정 칵테일의 상세 정보 조회
@@ -40,14 +55,23 @@ public class CocktailService {
     }
 
     // 칵테일 이름으로 검색
-    public List<CocktailListResponseDto> searchCocktails(String name) {
-        return cocktailRepository.findByNameContaining(name).stream()
+    public CocktailListResponseDto searchCocktails(String name) {
+        List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository.findByNameContaining(name).stream()
                 .map(CocktailMapper::toCocktailListDto)
                 .toList();
+
+        return CocktailListResponseDto.builder()
+                .result(cocktailResponseDtos)
+                .build();
     }
 
+    // 커스텀 칵테일 생성
     @Transactional
-    public CocktailDetailResponseDto createCocktail(CocktailCreateRequestDto requestDto) {
+    public CommonResponse createCocktail(CocktailCreateRequestDto requestDto, MultipartFile image) {
+        CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
+        User user = userRepository.findById(customUserDetails.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         // 카테고리 조회 및 재료 엔티티 생성
         List<Ingredient> ingredients = requestDto.getIngredients().stream()
                 .map(ingredientDto -> {
@@ -55,28 +79,28 @@ public class CocktailService {
                             .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
                     return Ingredient.builder()
-                            .categoryId(category)
-                            .ingredient(ingredientDto.getIngredient())
+                            .category(category)
+                            .ingredientName(ingredientDto.getIngredient())
                             .measure(ingredientDto.getMeasure())
                             .build();
                 })
                 .toList();
 
-        // 칵테일 엔티티 생성
-        Cocktail cocktail = new Cocktail(
-                requestDto.getEnCocktailName(),
-                requestDto.getKrCocktailName(),
-                requestDto.getImage(),
-                requestDto.getInstruction(),
-                requestDto.getUserId(),
-                new ArrayList<>()
-        );
+        String imageUrl = s3ImageService.upload(image);
 
-        // 양방향 연관관계 설정
-        ingredients.forEach(ingredient -> ingredient.addCocktail(cocktail));
+        Cocktail cocktail = Cocktail.builder()
+                .enCocktailName(requestDto.getEnCocktailName())
+                .krCocktailName(requestDto.getKrCocktailName())
+                .image(imageUrl)
+                .instruction(requestDto.getInstruction())
+                .user(user)
+                .build();
 
-        // 저장 및 응답 반환
-        Cocktail savedCocktail = cocktailRepository.save(cocktail);
-        return CocktailMapper.toCocktailDetailDto(savedCocktail);
+        ingredients.forEach(ingredient -> {
+            ingredient.addCocktail(cocktail);
+            ingredientRepository.save(ingredient);
+        });
+        cocktailRepository.save(cocktail);
+        return new CommonResponse("created");
     }
 }

@@ -11,43 +11,45 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 재료 정보를 저장하는 엔티티
 @Entity
 @Table(name = "ingredients")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Ingredient {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 칵테일과의 다대일 관계
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cocktail_id")
-    private Cocktail cocktailId; // 해당 재료가 사용되는 칵테일
+    private Cocktail cocktail;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 카테고리와의 다대일 관계
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category categoryId; // 재료의 카테고리 분류
+    private Category category;
 
-    private String ingredient; // 재료명
-    private String measure; // 재료의 양
+    private String ingredientName;
+    private String measure;
 
-    @Builder
-    public Ingredient(Category categoryId, String ingredient, String measure) {
-        this.categoryId = categoryId;
-        this.ingredient = ingredient;
-        this.measure = measure;
+    public void addCocktail(Cocktail cocktail) {
+        this.cocktail = cocktail;
+        if (!cocktail.getIngredients().contains(this)) {
+            cocktail.addIngredients(this);
+        }
     }
 
-    // 연관관계 메서드
-    public void addCocktail(Cocktail cocktail) {
-        this.cocktailId = cocktail;
-        if (!cocktail.getIngredients().contains(this)) {
-            cocktail.getIngredients().add(this);
+    public void addCategory(Category category) {
+        this.category = category;
+        if (!category.getIngredients().contains(this)) {
+            category.addIngredients(this);
         }
     }
 }
