@@ -2,7 +2,7 @@ import cv2
 from tensorflow.keras.models import load_model
 
 # MobileNet 모델 로드
-mobilenet_model = load_model('mobilenet_model.h5')  # MobileNet 모델 파일 경로를 지정해야 합니다.
+mobilenet_model = load_model('wine_classifier.pth')  # MobileNet 모델 파일 경로를 지정해야 합니다.
 
 def classify_bottle(bottle_img):
     """
