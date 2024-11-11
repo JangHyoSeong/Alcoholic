@@ -36,6 +36,8 @@ public class DrinkStock {
     @Column(name = "stock_time")
     private LocalDateTime stockTime;
 
+    private Integer position;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refrigerator_id")
     private Refrigerator refrigerator;
@@ -46,13 +48,14 @@ public class DrinkStock {
 
     private String stockName;
 
-    public static DrinkStock of(String image, Refrigerator refrigerator, Drink drink, String stockName) {
+    public static DrinkStock of(String image, Refrigerator refrigerator, Drink drink, Integer position, String stockName) {
         DrinkStock drinkStock = DrinkStock.builder()
                 .image(image)
                 .refrigerator(refrigerator)
                 .drink(drink)
                 .stockTime(LocalDateTime.now())
                 .stockName(stockName)
+                .position(position)
                 .build();
 
         refrigerator.addDrinkStock(drinkStock);
