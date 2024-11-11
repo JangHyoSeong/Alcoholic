@@ -7,7 +7,7 @@ const getCocktailList = async (token: string) => {
         Authorization: `${token}`
       }
     })
-    return response.data
+    return response.data.result
   } catch (error) {
     console.error('칵테일 목록 조회 실패')
   }

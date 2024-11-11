@@ -6,6 +6,12 @@ export interface Ref {
   main: boolean;
 }
 
+export interface AddDrink {
+  drinkName: string;
+  position: number;
+  image?: File | null;
+}
+
 const addRef = async (token: string, serialNumber: string): Promise<Ref | void> => {
   try {
     const response = await axiosInstance.post('/refrigerators/connect', {
@@ -61,4 +67,21 @@ const patchRef = async (token: string, refrigeratorId: number, newname: string):
   }
 }
 
-export { addRef, getRef, delRef, patchRef }
+const addDrinkRef = async (
+  token: string,
+  refrigeratorId: number,
+  formData: FormData
+): Promise<void> => {
+  try {
+    await axiosInstance.post(`/refrigerators/${refrigeratorId}`, formData, {
+      headers: {
+        Authorization: token,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  } catch (error) {
+    console.error('냉장고에 술 등록 실패', error);
+  }
+};
+
+export { addRef, getRef, delRef, patchRef, addDrinkRef }

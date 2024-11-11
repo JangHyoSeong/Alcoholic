@@ -73,6 +73,9 @@ const MyRefScreen: React.FC = () => {
     setRefetch((prev) => !prev); // 데이터 새로 고침
   };
 
+  const handleDetailRef = async () => {
+  }
+
   return (
     <View style={tw`mt-5`}>
       <CustomFont style={tw`ml-4`} fontSize={30} fontWeight='bold'>나의 술장고</CustomFont>

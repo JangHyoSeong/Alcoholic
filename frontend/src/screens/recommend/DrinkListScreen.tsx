@@ -93,7 +93,7 @@ const DrinkListScreen: React.FC = () => {
 
   return (
     <View style={tw`flex-1 bg-white`}>
-      <Ionicons style={tw`text-[35px] text-right`} name='filter' onPress={openCategoryModal} />
+      <Ionicons style={tw`text-[35px] text-right`} name='options' onPress={openCategoryModal} />
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={tw`flex-1 justify-center items-center bg-black/50`}>
           <View style={tw`bg-white w-3/4 p-4 rounded-lg`}>
