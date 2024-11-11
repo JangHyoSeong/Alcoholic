@@ -30,6 +30,7 @@ public enum ErrorCode {
     /* 재고 */
     STOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 재고가 없습니다"),
     STOCK_NOT_IN_USER_REFRIGERATORS(HttpStatus.FORBIDDEN, "본인이 보유하지 않은 술입니다."),
+    ALREADY_IN_POSITION(HttpStatus.BAD_REQUEST, "해당 위치에 이미 재고가 존재합니다."),
 
     /* 칵테일 */
     COCKTAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "칵테일이 존재하지 않습니다."),

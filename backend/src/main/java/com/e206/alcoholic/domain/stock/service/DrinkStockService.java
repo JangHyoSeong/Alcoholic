@@ -58,6 +58,7 @@ public class DrinkStockService {
                     .name(drink.getEnDrinkName())
                     .koreanName(drink.getKrDrinkName())
                     .stockTime(drinkStock.getStockTime())
+                    .position(drinkStock.getPosition())
                     .imageUrl(drinkStock.getImage())
                     .build());
         });
@@ -73,8 +74,14 @@ public class DrinkStockService {
         Drink drink = drinkRepository.findDrinkByKrDrinkName(requestDto.getDrinkName())
                 .orElseThrow(() -> new CustomException(ErrorCode.DRINK_NOT_FOUND));
 
+        Integer position = requestDto.getPosition();
+
+        drinkStockRepository.findByRefrigeratorIdAndPosition(refrigeratorId, position).ifPresent(existingStock -> {
+            throw new CustomException(ErrorCode.ALREADY_IN_POSITION);
+        });
+
         String imageURL = s3ImageService.upload(requestDto.getImage());
-        DrinkStock drinkStock = DrinkStock.of(imageURL, refrigerator, drink);
+        DrinkStock drinkStock = DrinkStock.of(imageURL, refrigerator, drink, position);
 
         drinkStockRepository.save(drinkStock);
         return new CommonResponse("ok");
@@ -96,6 +103,7 @@ public class DrinkStockService {
                 .koreanName(drink.getKrDrinkName())
                 .degree(drink.getAlcoholDegree())
                 .stockTime(drinkStock.getStockTime())
+                .position(drinkStock.getPosition())
                 .type("임시")
                 .build();
     }
@@ -110,6 +118,47 @@ public class DrinkStockService {
         if (!refrigerators.contains(drinkStock.getRefrigerator())) {
             throw new CustomException(ErrorCode.STOCK_NOT_IN_USER_REFRIGERATORS);
         }
+        drinkStockRepository.delete(drinkStock);
+        return new CommonResponse("deleted");
+    }
+
+
+    @Transactional
+    public CommonResponse adminAddDrinkStock(Integer refrigeratorId, DrinkStockAddRequestDto requestDto) {
+        CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
+        System.out.println(customUserDetails.getRole());
+        if (!customUserDetails.getRole().equals("ROLE_BOARD")) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
+
+        Drink drink = drinkRepository.findDrinkByKrDrinkName(requestDto.getDrinkName())
+                .orElseThrow(() -> new CustomException(ErrorCode.DRINK_NOT_FOUND));
+
+        Integer position = requestDto.getPosition();
+
+        drinkStockRepository.findByRefrigeratorIdAndPosition(refrigeratorId, position).ifPresent(existingStock -> {
+            throw new CustomException(ErrorCode.ALREADY_IN_POSITION);
+        });
+
+        String imageURL = s3ImageService.upload(requestDto.getImage());
+        DrinkStock drinkStock = DrinkStock.of(imageURL, refrigerator, drink, position);
+
+        drinkStockRepository.save(drinkStock);
+        return new CommonResponse("ok");
+    }
+
+
+    @Transactional
+    public CommonResponse adminDeleteDrinkStock(Integer drinkStockId) {
+        CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
+        if (!customUserDetails.getRole().equals("ROLE_BOARD")) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        DrinkStock drinkStock = drinkStockRepository.findById(drinkStockId).orElseThrow(() -> new CustomException(ErrorCode.STOCK_NOT_FOUND));
         drinkStockRepository.delete(drinkStock);
         return new CommonResponse("deleted");
     }

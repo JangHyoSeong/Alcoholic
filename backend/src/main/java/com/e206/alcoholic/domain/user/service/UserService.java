@@ -59,6 +59,7 @@ public class UserService implements UserDetailsService {
                     .username(user.getUsername())
                     .password(user.getPassword())
                     .nickname(user.getNickname())
+                    .role(user.getRole().name())
                     .build();
 
         } catch (Exception e) {

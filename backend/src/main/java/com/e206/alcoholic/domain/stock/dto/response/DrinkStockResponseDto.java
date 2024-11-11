@@ -16,5 +16,6 @@ public class DrinkStockResponseDto {
     private String name;
     private String koreanName;
     private LocalDateTime stockTime;
+    private Integer position;
     private String imageUrl;
 }

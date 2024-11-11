@@ -12,5 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class DrinkStockAddRequestDto {
     private String drinkName;
+    private Integer position;
     private MultipartFile image;
 }

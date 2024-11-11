@@ -56,7 +56,8 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = customUserDetails.getUsername();
         Integer userId = customUserDetails.getUserId();
         String nickname = customUserDetails.getNickname();
-        String token = jwtUtil.createJwt(username, userId, nickname, Duration.ofDays(30).toMillis());
+        String role = customUserDetails.getRole();
+        String token = jwtUtil.createJwt(username, userId, nickname, role, Duration.ofDays(30).toMillis());
         response.addHeader("Authorization", "Bearer " + token);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

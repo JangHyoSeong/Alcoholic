@@ -5,7 +5,6 @@ import com.e206.alcoholic.global.auth.dto.SignUpDto;
 import com.e206.alcoholic.global.auth.dto.request.SignUpRequestDto;
 import com.e206.alcoholic.global.auth.dto.response.AuthResponseDto;
 import com.e206.alcoholic.global.auth.repository.AuthRepository;
-import com.e206.alcoholic.global.common.CommonResponse;
 import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +35,5 @@ public class AuthService {
         // 회원가입 진행
         User user = User.ToUserFromSignUpRequestDto(signUpDto);
         return new AuthResponseDto(authRepository.save(user));
-    }
-
-    public CommonResponse login() {
-
-        return new CommonResponse("ok");
     }
 }

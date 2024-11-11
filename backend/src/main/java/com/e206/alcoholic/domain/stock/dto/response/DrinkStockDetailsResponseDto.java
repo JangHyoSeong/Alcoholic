@@ -17,5 +17,6 @@ public class DrinkStockDetailsResponseDto {
     private String koreanName;
     private Float degree;
     private String type;
+    private Integer position;
     private LocalDateTime stockTime;
 }
