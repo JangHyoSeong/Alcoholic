@@ -1,4 +1,5 @@
 import cv2
+import torch
 from ultralytics import YOLO
 
 # YOLO 모델 로드
