@@ -67,11 +67,7 @@ const patchRef = async (token: string, refrigeratorId: number, newname: string):
   }
 }
 
-const addDrinkRef = async (
-  token: string,
-  refrigeratorId: number,
-  formData: FormData
-): Promise<void> => {
+const addDrinkRef = async (token: string, refrigeratorId: number, formData: FormData): Promise<void> => {
   try {
     await axiosInstance.post(`/refrigerators/${refrigeratorId}`, formData, {
       headers: {
@@ -84,4 +80,18 @@ const addDrinkRef = async (
   }
 };
 
-export { addRef, getRef, delRef, patchRef, addDrinkRef }
+const getDrinkRef = async (token:string, refrigeratorId: number) => {
+  try {
+    const response = await axiosInstance.get(`/refrigerators/${refrigeratorId}`, {
+      headers: {
+        Authorization: token,
+      }
+    })
+    console.log('술 재고 조회', response.data.results)
+    return response.data.results
+  } catch (error) {
+    console.error('술 재고 조회 에러 발생')
+  }
+}
+
+export { addRef, getRef, delRef, patchRef, addDrinkRef, getDrinkRef }

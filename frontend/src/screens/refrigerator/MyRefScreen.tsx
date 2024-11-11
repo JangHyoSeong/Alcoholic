@@ -77,10 +77,10 @@ const MyRefScreen: React.FC = () => {
   }
 
   return (
-    <View style={tw`mt-5`}>
-      <CustomFont style={tw`ml-4`} fontSize={30} fontWeight='bold'>나의 술장고</CustomFont>
+    <View style={tw.style('mt-5')}>
+      <CustomFont style={tw.style('ml-4')} fontSize={30} fontWeight='bold'>나의 술장고</CustomFont>
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-        <CustomFont style={tw`text-right text-[purple] mr-2`} fontSize={15}>추가하기</CustomFont>
+        <CustomFont style={tw.style('text-right', 'text-[purple]' ,'mr-2')} fontSize={15}>추가하기</CustomFont>
       </TouchableOpacity>
       {refItems.length > 0 ? (
         <FlatList
@@ -91,10 +91,10 @@ const MyRefScreen: React.FC = () => {
       ) : (
       <ImageBackground
         source={ref}
-        style={[tw`ml-[7px] mt-5 w-[400px] h-[680px] rounded-md overflow-hidden opacity-80`, {elevation: 10}]}
+        style={[tw.style('ml-[7px]', 'mt-5', 'w-[400px]', 'h-[680px]', 'rounded-md', 'overflow-hidden','opacity-80'), {elevation: 10}]}
         resizeMode='cover'>
-        <View style={tw`p-4`}>
-          <CustomFont style={tw`text-white text-[28px] ml-10 mt-10`}>술장고를 등록해 주세요!</CustomFont>
+        <View style={tw.style('p-4')}>
+          <CustomFont style={tw.style('text-white', 'text-[28px]', 'ml-10', 'mt-10')}>술장고를 등록해 주세요!</CustomFont>
         </View>
       </ImageBackground>
       )}

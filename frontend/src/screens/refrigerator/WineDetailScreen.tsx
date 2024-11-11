@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const WineDetailScreen = () => {
  return (
-   <View style={tw``}>
+   <View style={tw.style()}>
      
    </View>
  );
