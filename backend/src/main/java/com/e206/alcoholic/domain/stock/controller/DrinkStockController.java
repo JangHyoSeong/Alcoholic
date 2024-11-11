@@ -2,6 +2,7 @@ package com.e206.alcoholic.domain.stock.controller;
 
 import com.e206.alcoholic.domain.refrigerator.service.RefrigeratorService;
 import com.e206.alcoholic.domain.stock.dto.request.DrinkStockAddRequestDto;
+import com.e206.alcoholic.domain.stock.dto.request.DrinkStockDeleteRequestDto;
 import com.e206.alcoholic.domain.stock.dto.response.DrinkStockDetailsResponseDto;
 import com.e206.alcoholic.domain.stock.dto.response.DrinkStockListResponseDto;
 import com.e206.alcoholic.domain.stock.service.DrinkStockService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,9 +54,11 @@ public class DrinkStockController {
         return ResponseEntity.ok(drinkStockService.adminAddDrinkStock(refrigeratorId, requestDto));
     }
 
-    @DeleteMapping("/admin/stocks/{stockId}")
-    public ResponseEntity<CommonResponse> adminDeleteDrinkStock(@PathVariable Integer stockId) {
-        return ResponseEntity.ok(drinkStockService.adminDeleteDrinkStock(stockId));
+    @DeleteMapping("/admin/stocks/{refrigeratorId}")
+    public ResponseEntity<CommonResponse> adminDeleteDrinkStock(
+            @PathVariable Integer refrigeratorId,
+            @RequestBody DrinkStockDeleteRequestDto requestDto) {
+        return ResponseEntity.ok(drinkStockService.adminDeleteDrinkStock(refrigeratorId, requestDto));
     }
 
 }
