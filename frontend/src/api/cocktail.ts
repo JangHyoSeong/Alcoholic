@@ -76,14 +76,15 @@ const addCocktail = async (token: string, cocktail:Cocktail ) => {
   if (cocktail.image) {
     formData.append('image', cocktail.image)
   }
+  console.log('전송할 FormData:', formData);
   try {
-    await axiosInstance.post(`/cocktails`, formData,{
+    const response = await axiosInstance.post(`/cocktails`, formData,{
       headers: {
         Authorization: token,
         "Content-Type": "multipart/form-data",
       }
     })
-    console.log('커스텀 칵테일 등록 성공')
+    console.log('커스텀 칵테일 등록 성공', response.data)
   } catch (error) {
     console.error('커스텀 칵테일 등록 실패', error)
   }
