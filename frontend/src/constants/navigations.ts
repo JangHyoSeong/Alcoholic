@@ -30,6 +30,7 @@ const MyStorageNavigations = {
 const RecipeNavigations = {
   RECIPE_HOME : 'RecipeHome',
   RECIPE_DETAIL : 'RecipeDetail',
+  RECIPE_ADD : 'RecipeAdd',
 } as const
 
 const MyPageNavigations = {

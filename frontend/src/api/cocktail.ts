@@ -1,5 +1,19 @@
 import axiosInstance from "./axios";
 
+export interface Ingredient {
+  categoryId: number;
+  ingredient: string;
+  measure: string;
+}
+
+export interface Cocktail {
+  enCocktailName: string;
+  krCocktailName: string;
+  image?: string;
+  instruction: string;
+  ingredients: Ingredient[]
+}
+
 const getCocktailList = async (token: string) => {
   try {
     const response = await axiosInstance.get('/cocktails',{
@@ -43,4 +57,23 @@ const searchCocktailList = async (token: string, name: string) => {
   }
 }
 
-export { getCocktailList, getCocktailDetail, searchCocktailList }
+const addCocktail = async (token: string, cocktail:Cocktail ) => {
+  try {
+    await axiosInstance.post(`/cocktails`,{
+      enCocktailName: cocktail.enCocktailName,
+      krCocktailName: cocktail.krCocktailName,
+      image: cocktail.image,
+      instruction: cocktail.instruction,
+      ingredients: cocktail.ingredients,
+    },
+    {
+      headers: {
+        Authorization: token
+      }
+    })
+  } catch (error) {
+    console.error('칵테일 커스텀 등록 실패')
+  }
+}
+
+export { getCocktailList, getCocktailDetail, searchCocktailList, addCocktail }
