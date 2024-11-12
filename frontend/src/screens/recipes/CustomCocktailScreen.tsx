@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import tw from 'twrnc';
-import { View, TextInput, Alert } from 'react-native';
+import { View, TextInput, Alert, ScrollView } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import CustomButton from '@/components/common/CustomButton';
 import CustomFont from '@/components/common/CustomFont';
 import { useNavigation } from '@react-navigation/native';
@@ -8,14 +9,16 @@ import { useAppStore } from '@/state/useAppStore';
 import { addCocktail } from '@/api/cocktail';
 import { Ingredient, Cocktail } from '@/api/cocktail';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import RecipeStackNavigator, { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
+import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
 
 const CustomCocktailScreen: React.FC = () => {
   const [ enCocktailName, setEnCocktailName ] = useState('')
   const [ krCocktailName, setKrCocktailName ] = useState('')
   const [ image, setImage ] = useState('')
   const [ instruction, setInstruction ] = useState('')
-  const [ ingredients, setIngredients ] = useState<Ingredient[]>([])
+  const [ ingredients, setIngredients ] = useState<Ingredient[]>([
+    { categoryId: 0, ingredient: '', measure: '' }
+  ])
   const [ categoryId, setCategoryId ] = useState(1)
   const token = useAppStore((state) => state.token)
   const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>()
@@ -50,8 +53,12 @@ const CustomCocktailScreen: React.FC = () => {
 
   }
 
+  const addIngredientField = () => {
+    setIngredients([...ingredients, { categoryId: categoryId, ingredient: '', measure: '' }]);
+  };
+
   return (
-    <View style={tw`flex-1 bg-white p-5`}>
+    <ScrollView style={tw`flex-1 bg-white p-5`}>
       <CustomFont style={tw`text-2xl font-bold mb-4 text-center`}>칵테일 등록</CustomFont>
 
       <TextInput
@@ -82,18 +89,23 @@ const CustomCocktailScreen: React.FC = () => {
       {/* 재료 입력 필드 */}
       {ingredients.map((ingredient, index) => (
         <View key={index} style={tw`mb-3`}>
-          {/* Category ID 입력 */}
-          <TextInput
-            style={tw`border border-gray-300 rounded p-3 mb-2`}
-            placeholder={`Category ID ${index + 1}`}
-            value={String(ingredient.categoryId)}
-            keyboardType="numeric"
-            onChangeText={(text) => {
-              const newIngredients = [...ingredients];
-              newIngredients[index].categoryId = Number(text);
-              setIngredients(newIngredients);
-            }}
-          />
+          {/* 첫 번째 재료 항목에만 카테고리 입력 필드 추가 */}
+          {index === 0 && (
+            <Picker
+              selectedValue={ingredient.categoryId}
+              onValueChange={(value) => {
+                setCategoryId(value);  // 선택한 카테고리 값을 상태로 저장
+                const newIngredients = [...ingredients];
+                newIngredients[index].categoryId = value;
+                setIngredients(newIngredients);
+              }}
+              style={tw`border border-gray-300 rounded mb-2`}
+            >
+              {[...Array(13)].map((_, i) => (
+                <Picker.Item key={i + 1} label={`카테고리 ${i + 1}`} value={i + 1} />
+              ))}
+            </Picker>
+          )}
 
           {/* 재료 이름 입력 */}
           <TextInput
@@ -120,10 +132,11 @@ const CustomCocktailScreen: React.FC = () => {
           />
         </View>
       ))}
-      <View style={tw`mt-5`}>
-        <CustomButton label="칵테일 등록" onPress={handleSubmit} />
+      <CustomButton label="재료 추가" size='small' onPress={addIngredientField} />
+      <View style={tw`mt-3`}>
+        <CustomButton label="칵테일 등록" size='small' onPress={handleSubmit} />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

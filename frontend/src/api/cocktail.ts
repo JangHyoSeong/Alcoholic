@@ -1,4 +1,5 @@
 import axiosInstance from "./axios";
+import axios from "axios";
 
 export interface Ingredient {
   categoryId: number;
@@ -58,21 +59,33 @@ const searchCocktailList = async (token: string, name: string) => {
 }
 
 const addCocktail = async (token: string, cocktail:Cocktail ) => {
+  const formData = new FormData();
+  
+  const cocktailData = {
+    enCocktailName : cocktail.enCocktailName,
+    krCocktailName : cocktail.krCocktailName,
+    instruction : cocktail.instruction,
+    ingredients : cocktail.ingredients,
+  }
+  
+  formData.append(
+    'cocktailData',
+    new Blob([JSON.stringify(cocktailData)], { type: 'application/json', lastModified: Date.now()})
+  )
+
+  if (cocktail.image) {
+    formData.append('image', cocktail.image)
+  }
   try {
-    await axiosInstance.post(`/cocktails`,{
-      enCocktailName: cocktail.enCocktailName,
-      krCocktailName: cocktail.krCocktailName,
-      image: cocktail.image,
-      instruction: cocktail.instruction,
-      ingredients: cocktail.ingredients,
-    },
-    {
+    await axiosInstance.post(`/cocktails`, formData,{
       headers: {
-        Authorization: token
+        Authorization: token,
+        "Content-Type": "multipart/form-data",
       }
     })
+    console.log('커스텀 칵테일 등록 성공')
   } catch (error) {
-    console.error('칵테일 커스텀 등록 실패')
+    console.error('커스텀 칵테일 등록 실패', error)
   }
 }
 
