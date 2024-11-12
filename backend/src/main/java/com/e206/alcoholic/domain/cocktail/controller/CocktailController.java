@@ -48,9 +48,15 @@ public class CocktailController {
         return ResponseEntity.ok(cocktailService.createCocktail(requestDto, image));
     }
 
-    // 검색량 기준으로 칵테일 추천
+    // 검색량 기준 칵테일 추천
     @GetMapping("/popularity")
     public ResponseEntity<CocktailListResponseDto> getPopularCocktails() {
         return ResponseEntity.ok(cocktailService.getPopularCocktails());
+    }
+
+    // 재고 기반 칵테일 추천
+    @GetMapping("/stock")
+    public ResponseEntity<CocktailListResponseDto> getStockBasedCocktails() {
+        return ResponseEntity.ok(cocktailService.getStockBasedCocktails());
     }
 }
