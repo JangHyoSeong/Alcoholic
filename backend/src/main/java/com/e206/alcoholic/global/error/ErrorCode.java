@@ -20,6 +20,7 @@ public enum ErrorCode {
     DUPLICATE_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
 
     /* 냉장고 */
+    REFRIGERATOR_DONT_HAVE(HttpStatus.NOT_FOUND, "보유하지 않는 냉장고입니다."),
     REFRIGERATOR_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 냉장고입니다."),
     DUPLICATE_SERIAL_NUMBER(HttpStatus.CONFLICT, "이미 등록된 냉장고입니다."),
     MAIN_REFRIGERATOR_DELETE_DENIED(HttpStatus.BAD_REQUEST, "메인 냉장고는 삭제할 수 없습니다."),

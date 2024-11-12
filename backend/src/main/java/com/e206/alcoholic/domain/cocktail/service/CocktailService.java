@@ -4,6 +4,8 @@ import com.e206.alcoholic.domain.category.entity.Category;
 import com.e206.alcoholic.domain.category.repository.CategoryRepository;
 import com.e206.alcoholic.domain.cocktail.dto.request.CocktailCreateRequestDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailDetailResponseDto;
+import com.e206.alcoholic.domain.cocktail.dto.response.CocktailInventoryDto;
+import com.e206.alcoholic.domain.cocktail.dto.response.CocktailInventoryResponseDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailResponseDto;
 import com.e206.alcoholic.domain.cocktail.entity.Cocktail;
@@ -13,7 +15,6 @@ import com.e206.alcoholic.domain.ingredient.entity.Ingredient;
 import com.e206.alcoholic.domain.ingredient.repository.IngredientRepository;
 import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
 import com.e206.alcoholic.domain.refrigerator.repository.RefrigeratorRepository;
-import com.e206.alcoholic.domain.stock.repository.DrinkStockRepository;
 import com.e206.alcoholic.domain.user.dto.CustomUserDetails;
 import com.e206.alcoholic.domain.user.entity.User;
 import com.e206.alcoholic.domain.user.repository.UserRepository;
@@ -117,7 +118,7 @@ public class CocktailService {
     }
 
     // 재고 기반 칵테일 추천
-    public CocktailListResponseDto getStockBasedCocktails() {
+    public CocktailInventoryResponseDto getStockBasedCocktails() {
         // 현재 로그인한 사용자 정보 가져오기
         CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
         User user = userRepository.findById(customUserDetails.getUserId())
@@ -126,17 +127,17 @@ public class CocktailService {
         // 사용자의 모든 냉장고 확인
         List<Refrigerator> refrigerators = refrigeratorRepository.findByUserId(user.getId());
         if (refrigerators.isEmpty()) {
-            throw new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND);
+            throw new CustomException(ErrorCode.REFRIGERATOR_DONT_HAVE);
         }
 
         // 사용자의 모든 냉장고의 재고를 기반으로 만들 수 있는 칵테일 찾기
-        List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository
+        List<CocktailInventoryDto> cocktailInventoryResponseDtos = cocktailRepository  // 타입 수정
                 .findCocktailsByUserDrinkStock(user.getId())
                 .stream()
-                .map(CocktailMapper::toCocktailListDto)
+                .map(CocktailMapper::toCocktailInventoryDto)
                 .toList();
-        return CocktailListResponseDto.builder()
-                .result(cocktailResponseDtos)
+        return CocktailInventoryResponseDto.builder()
+                .result(cocktailInventoryResponseDtos)
                 .build();
     }
 }

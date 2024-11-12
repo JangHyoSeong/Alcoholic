@@ -2,6 +2,7 @@ package com.e206.alcoholic.domain.cocktail.controller;
 
 import com.e206.alcoholic.domain.cocktail.dto.request.CocktailCreateRequestDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailDetailResponseDto;
+import com.e206.alcoholic.domain.cocktail.dto.response.CocktailInventoryResponseDto;
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
 import com.e206.alcoholic.domain.cocktail.service.CocktailService;
 import com.e206.alcoholic.global.common.CommonResponse;
@@ -56,7 +57,7 @@ public class CocktailController {
 
     // 재고 기반 칵테일 추천
     @GetMapping("/stock")
-    public ResponseEntity<CocktailListResponseDto> getStockBasedCocktails() {
+    public ResponseEntity<CocktailInventoryResponseDto> getStockBasedCocktails() {  // 리턴 타입 수정
         return ResponseEntity.ok(cocktailService.getStockBasedCocktails());
     }
 }
