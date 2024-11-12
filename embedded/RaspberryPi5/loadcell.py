@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 from collections import deque
 import os
 import requests
-from OCR import encode_image_to_base64
-import base64
+
 
 load_dotenv()
 server_api_url = os.getenv("SERVER_API_URL")
@@ -15,33 +14,28 @@ token = os.getenv("TOKEN")
 weight_queue = deque(maxlen=3)
 weight_cnt = [0,0,0,0]
 ARR_LEN = 4
+DETECTION_THRESHOLD = 2
 refrigerator_id = 1
 
-# def encode_image_to_base64(image_path):
-#     with open(image_path, "rb") as image_file:
-#         base64_encoded = base64.b64encode(image_file.read()).decode("utf-8")
-#     return base64_encoded
 
-
-def post_register(refrigerator_id, drink_name, position, image_path):
+def register_drink(refrigerator_id, drink_name, position, image_path):
     url = f"{server_api_url}/refrigerators/admin/{refrigerator_id}"
     headers = {
         "Authorization": token,
         # "Content-Type": "multipart/form-data"
     }
-    # files = {"image": open(image_path, "rb")}  # 이미지 파일을 바이너리 형식으로 열기
-    image_base64 = encode_image_to_base64(image_path)
 
     data = {
         "drinkName": drink_name,
-        "position": position,
-        # "image": ("image.jpg", open(image_path, "rb"), "image/jpeg")
-        # "image": image_base64
+        "position": position
+    }
+
+    files = {
+        "image": ("image.jpg", open(image_path, "rb"), "image/jpeg")  # 이미지 파일
     }
 
     try:
-        # response = requests.post(url, headers=headers, files=files, data=data)
-        response = requests.post(url, headers=headers, data=data)
+        response = requests.post(url, headers=headers, data=data, files=files)
         response.raise_for_status()  # HTTP 오류가 발생하면 예외 발생
 
         # JSON 응답 파싱
@@ -85,7 +79,7 @@ def start_weight_data_monitoring():
 
     inventory = get_inventory(refrigerator_id, ARR_LEN)
     
-    THRESHOLD_WEIGHT = 300
+    THRESHOLD_WEIGHT = 200
 
     try:
         while True:
@@ -95,25 +89,21 @@ def start_weight_data_monitoring():
 
                 for i in range(ARR_LEN):
                     if not inventory[i]:
-                        if weight_queue[-1][i] >= THRESHOLD_WEIGHT and weight_cnt[i] < 3:
+                        if weight_queue[-1][i] >= THRESHOLD_WEIGHT and weight_cnt[i] < DETECTION_THRESHOLD:
                             weight_cnt[i] += 1
                         else:
                             weight_cnt[i] = 0
-                        if weight_cnt[i] == 3:
-                            # print(f"{i+1}번 센서 술 등록") 
-                            print(f"2번 센서 술 등록") 
+                        if weight_cnt[i] == DETECTION_THRESHOLD:
                             ## POST 등록
-                            # post_register(refrigerator_id, "test_drink", i+1, "captured_image.jpg")
-                            post_register(refrigerator_id, "test_drink", 2, "captured_image.jpg")
+                            register_drink(refrigerator_id, "test_drink", i+1, "captured_image.jpg")
                             inventory[i] = True
                     elif inventory[i]:
                         if weight_queue[-1][i] < THRESHOLD_WEIGHT and weight_cnt[i] > 0:
                             weight_cnt[i] -= 1
                         else:
-                            weight_cnt[i] = 3
+                            weight_cnt[i] = DETECTION_THRESHOLD
                         if weight_cnt[i] == 0:
-                            print(f"{i+1}번 센서 술 제거")
-                            ## POST 제거
+                            ## delete 제거
                             inventory[i] = False
 
             time.sleep(1)
