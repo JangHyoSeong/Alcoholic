@@ -44,8 +44,8 @@ public class CocktailController {
     // 커스텀 칵테일 등록
     @PostMapping
     public ResponseEntity<CommonResponse> createCocktail(
-            @RequestPart("cocktailData") CocktailCreateRequestDto requestDto,
-            @RequestPart("image") MultipartFile image) {
+            @RequestPart(name = "cocktailData") CocktailCreateRequestDto requestDto,
+            @RequestPart(name = "image") MultipartFile image) {
         return ResponseEntity.ok(cocktailService.createCocktail(requestDto, image));
     }
 
