@@ -48,6 +48,33 @@ def register_drink(refrigerator_id, drink_name, position, image_path):
         return None
 
 
+def delete_drink(refrigerator_id, position):
+    url = f"{server_api_url}/refrigerators/admin/stocks/{refrigerator_id}"
+    headers = {
+        "Authorization": token,
+        "Content-Type": "application/json"
+    }
+    data = {
+        "position": position
+    }
+
+    try:
+        response = requests.delete(url, headers=headers, json=data)  # data 대신 json 사용
+        response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
+
+        # JSON 응답 파싱
+        result = response.json().get("result")
+        if result == "deleted":
+            print(f"DELETE 요청 성공: 위치 {position}의 술이 삭제되었습니다.")
+        else:
+            print("삭제 실패:", response.json())
+        return result
+
+    except requests.exceptions.RequestException as e:
+        print("DELETE 요청 실패:", e)
+        return None
+
+
 def get_inventory(refrigerator_id, ARR_LEN):
     headers = {
         "Authorization": token  # GET 요청에는 Content-Type이 필요하지 않음
@@ -104,6 +131,7 @@ def start_weight_data_monitoring():
                             weight_cnt[i] = DETECTION_THRESHOLD
                         if weight_cnt[i] == 0:
                             ## delete 제거
+                            delete_drink(refrigerator_id, i+1)
                             inventory[i] = False
 
             time.sleep(1)
