@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import tw from 'twrnc';
-import { TouchableOpacity, View, Image } from 'react-native';
+import { TouchableOpacity, View, Image, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StorageStackParamList } from '@/navigations/stack/StorageStackNavigator';
 import { MyStorageNavigations } from '@/constants';
 import CustomFont from '@/components/common/CustomFont';
-import { getDrinkRef } from '@/api/refrigerator';
+import { getDrinkRef, getDrinkDetailRef } from '@/api/refrigerator';
 import { useAppStore } from '@/state/useAppStore';
 import axiosInstance from '@/api/axios';
 
@@ -20,12 +20,24 @@ interface DrinkItem {
   imageUrl: string;
 }
 
+interface DrinkItemDetail {
+  id: number;
+  name: string;
+  koreanName: string;
+  degree: number;
+  type: string;
+  position: number;
+  stockTime: Date;
+}
+
 type MyStorageDetailScreenRouteProp = RouteProp<StorageStackParamList, 'MyStorageDetail'>
 
 const MyRefDetailScreen: React.FC = () => {
   const { params } = useRoute<MyStorageDetailScreenRouteProp>()
   const { refrigeratorId } = params
   const [ drinks, setDrinks ] = useState<DrinkItem[]>([])
+  const [ selectedDrink, setSelectedDrink ] = useState<DrinkItemDetail>()
+  const [ isModalVisible, setIsModalVisible ] = useState(false)
   const navigation = useNavigation<NativeStackNavigationProp<StorageStackParamList>>()
   const token = useAppStore((state) => state.token)
 
@@ -43,6 +55,16 @@ const MyRefDetailScreen: React.FC = () => {
       console.log('삭제 성공')
     } catch (error) {
       console.error('삭제 실패')
+    }
+  }
+
+  const handleOpenModal = async (stockId: number) => {
+    try {
+      const drinkDetails = await getDrinkDetailRef(token, stockId)
+      setSelectedDrink(drinkDetails)
+      setIsModalVisible(true)
+    } catch (error) {
+      console.error('디테일 스크린에서 상세 정보 에러')
     }
   }
 
@@ -65,13 +87,15 @@ const MyRefDetailScreen: React.FC = () => {
       <View style={tw`items-center p-2`}>
         {drinkAtPosition ? (
           <>
-            <View style={tw`p-4 border rounded-lg`}>
-              <Image
-                source={{ uri: drinkAtPosition.imageUrl }}
-                style={tw`w-11 h-11 rounded-lg object-cover`}
-                resizeMode='cover'
-              />
-            </View>
+            <TouchableOpacity onPress={() => handleOpenModal(drinkAtPosition.id)}>
+              <View style={tw`p-4 border rounded-lg`}>
+                <Image
+                  source={{ uri: drinkAtPosition.imageUrl }}
+                  style={tw`w-11 h-11 rounded-lg object-cover`}
+                  resizeMode='cover'
+                />
+              </View>
+            </TouchableOpacity>
             <CustomFont style={tw`mt-2 text-center text-black`} ellipsizeMode='tail'>
               {drinkAtPosition.koreanName}
             </CustomFont>
@@ -106,6 +130,30 @@ const MyRefDetailScreen: React.FC = () => {
         <CustomFont style={tw`text-[20px] text-blue-300 text-center`}>술 등록 하기</CustomFont>
       </TouchableOpacity>
       </View>
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={tw`flex-1 justify-center items-center bg-black opacity-80`}>
+          <View style={tw`bg-white p-6 rounded-lg w-[80%]`}>
+            {selectedDrink && (
+              <>
+                <CustomFont style={tw`text-xl font-bold text-center`}>{selectedDrink.koreanName}</CustomFont>
+                <CustomFont>도수: {selectedDrink.degree}%</CustomFont>
+                <CustomFont>종류: {selectedDrink.type}</CustomFont>
+                <CustomFont>위치: {selectedDrink.position}</CustomFont>
+                <CustomFont>입고 시간: {selectedDrink.stockTime}</CustomFont>
+                <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                  <CustomFont style={tw`text-red-500 text-center mt-4`}>닫기</CustomFont>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 };
