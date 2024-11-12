@@ -7,6 +7,7 @@ import com.e206.alcoholic.domain.stock.dto.response.DrinkStockDetailsResponseDto
 import com.e206.alcoholic.domain.stock.dto.response.DrinkStockListResponseDto;
 import com.e206.alcoholic.domain.stock.service.DrinkStockService;
 import com.e206.alcoholic.global.common.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +34,7 @@ public class DrinkStockController {
     @PostMapping("/{refrigeratorId}")
     public ResponseEntity<CommonResponse> addDrinkStock(
             @PathVariable Integer refrigeratorId,
-            @ModelAttribute DrinkStockAddRequestDto requestDto) {
+            @Valid @ModelAttribute DrinkStockAddRequestDto requestDto) {
         return ResponseEntity.ok(drinkStockService.addDrinkStock(refrigeratorId, requestDto));
     }
 
@@ -50,7 +51,7 @@ public class DrinkStockController {
     @PostMapping("/admin/{refrigeratorId}")
     public ResponseEntity<CommonResponse> adminAddDrinkStock(
             @PathVariable Integer refrigeratorId,
-            @ModelAttribute DrinkStockAddRequestDto requestDto) {
+            @Valid @ModelAttribute DrinkStockAddRequestDto requestDto) {
         return ResponseEntity.ok(drinkStockService.adminAddDrinkStock(refrigeratorId, requestDto));
     }
 
