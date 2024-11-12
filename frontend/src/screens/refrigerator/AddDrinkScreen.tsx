@@ -9,8 +9,10 @@ import CustomFont from '@/components/common/CustomFont';
 import CustomButton from '@/components/common/CustomButton';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StorageStackParamList } from '@/navigations/stack/StorageStackNavigator';
+import { useNavigation } from '@react-navigation/native';
 
 const AddDrinkScreen: React.FC = () => {
+  const navigation = useNavigation()
   const { params } = useRoute<RouteProp<StorageStackParamList, 'WineRegister'>>()
   const { refrigeratorId } = params
   const token = useAppStore((state) => state.token)
@@ -60,6 +62,7 @@ const AddDrinkScreen: React.FC = () => {
       console.error('등록 실패', error);
     } finally {
       setIsSubmitting(false);
+      navigation.goBack()
     }
   };
 

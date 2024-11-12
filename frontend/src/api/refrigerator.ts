@@ -87,11 +87,24 @@ const getDrinkRef = async (token:string, refrigeratorId: number) => {
         Authorization: token,
       }
     })
-    console.log('술 재고 조회', response.data.results)
     return response.data.results
   } catch (error) {
     console.error('술 재고 조회 에러 발생')
   }
 }
 
-export { addRef, getRef, delRef, patchRef, addDrinkRef, getDrinkRef }
+const getDrinkDetailRef = async (token:string, stockId: number) => {
+  try {
+    const response = await axiosInstance.get(`/refrigerators/stocks/${stockId}`, {
+      headers: {
+        Authorization: token,
+      }
+    })
+    console.log('술 상세 정보',response.data)
+    return response.data
+  } catch (error) {
+    console.error('술 상세 정보 조회 에러')
+  }
+}
+
+export { addRef, getRef, delRef, patchRef, addDrinkRef, getDrinkRef, getDrinkDetailRef}

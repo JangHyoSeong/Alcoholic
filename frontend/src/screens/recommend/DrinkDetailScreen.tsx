@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import tw from 'twrnc';
-import { View, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import CustomFont from '@/components/common/CustomFont';
 import { DrinkDetailProps } from '@/types/drink';
