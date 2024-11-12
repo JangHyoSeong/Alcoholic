@@ -11,6 +11,9 @@ import com.e206.alcoholic.domain.cocktail.mapper.CocktailMapper;
 import com.e206.alcoholic.domain.cocktail.repository.CocktailRepository;
 import com.e206.alcoholic.domain.ingredient.entity.Ingredient;
 import com.e206.alcoholic.domain.ingredient.repository.IngredientRepository;
+import com.e206.alcoholic.domain.refrigerator.entity.Refrigerator;
+import com.e206.alcoholic.domain.refrigerator.repository.RefrigeratorRepository;
+import com.e206.alcoholic.domain.stock.repository.DrinkStockRepository;
 import com.e206.alcoholic.domain.user.dto.CustomUserDetails;
 import com.e206.alcoholic.domain.user.entity.User;
 import com.e206.alcoholic.domain.user.repository.UserRepository;
@@ -35,13 +38,14 @@ public class CocktailService {
     private final IngredientRepository ingredientRepository;
     private final S3ImageService s3ImageService;
     private final UserRepository userRepository;
+    private final RefrigeratorRepository refrigeratorRepository;
+
 
     // 전체 칵테일 목록 조회
     public CocktailListResponseDto getAllCocktails() {
         List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository.findAll().stream()
                 .map(CocktailMapper::toCocktailListDto)
                 .toList();
-
         return CocktailListResponseDto.builder()
                 .result(cocktailResponseDtos)
                 .build();
@@ -59,7 +63,6 @@ public class CocktailService {
         List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository.findByNameContaining(name).stream()
                 .map(CocktailMapper::toCocktailListDto)
                 .toList();
-
         return CocktailListResponseDto.builder()
                 .result(cocktailResponseDtos)
                 .build();
@@ -77,7 +80,6 @@ public class CocktailService {
                 .map(ingredientDto -> {
                     Category category = categoryRepository.findById(ingredientDto.getCategoryId())
                             .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
-
                     return Ingredient.builder()
                             .category(category)
                             .ingredientName(ingredientDto.getIngredient())
@@ -104,8 +106,33 @@ public class CocktailService {
         return new CommonResponse("created");
     }
 
+    // 검색량 기반 칵테일 추천
     public CocktailListResponseDto getPopularCocktails() {
         List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository.findAllOrderByValueDesc().stream()
+                .map(CocktailMapper::toCocktailListDto)
+                .toList();
+        return CocktailListResponseDto.builder()
+                .result(cocktailResponseDtos)
+                .build();
+    }
+
+    // 재고 기반 칵테일 추천
+    public CocktailListResponseDto getStockBasedCocktails() {
+        // 현재 로그인한 사용자 정보 가져오기
+        CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
+        User user = userRepository.findById(customUserDetails.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 사용자의 모든 냉장고 확인
+        List<Refrigerator> refrigerators = refrigeratorRepository.findByUserId(user.getId());
+        if (refrigerators.isEmpty()) {
+            throw new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND);
+        }
+
+        // 사용자의 모든 냉장고의 재고를 기반으로 만들 수 있는 칵테일 찾기
+        List<CocktailResponseDto> cocktailResponseDtos = cocktailRepository
+                .findCocktailsByUserDrinkStock(user.getId())
+                .stream()
                 .map(CocktailMapper::toCocktailListDto)
                 .toList();
         return CocktailListResponseDto.builder()
