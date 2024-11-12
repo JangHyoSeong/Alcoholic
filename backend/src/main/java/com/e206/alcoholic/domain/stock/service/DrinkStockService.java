@@ -45,7 +45,6 @@ public class DrinkStockService {
         Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
 
-        System.out.println(customUserDetails.getRole());
         if (customUserDetails.getRole().equals("ROLE_BOARD")) {
         } else if (refrigerator.getUser() == null || !refrigerator.getUser().getId().equals(currentUserId)) {
             throw new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND);
@@ -56,14 +55,21 @@ public class DrinkStockService {
 
         drinkStockList.forEach(drinkStock -> {
             Drink drink = drinkStock.getDrink();
-            result.add(DrinkStockResponseDto.builder()
+
+            DrinkStockResponseDto.DrinkStockResponseDtoBuilder dtoBuilder = DrinkStockResponseDto.builder()
                     .id(drinkStock.getId())
-                    .name(drink.getEnDrinkName())
-                    .koreanName(drink.getKrDrinkName())
                     .stockTime(drinkStock.getStockTime())
                     .position(drinkStock.getPosition())
-                    .imageUrl(drinkStock.getImage())
-                    .build());
+                    .imageUrl(drinkStock.getImage());
+
+            if (drink != null) {
+                dtoBuilder.name(drink.getEnDrinkName())
+                        .koreanName(drink.getKrDrinkName());
+            } else {
+                dtoBuilder.koreanName(drinkStock.getStockName());
+            }
+
+            result.add(dtoBuilder.build());
         });
         return new DrinkStockListResponseDto(result);
     }
@@ -131,7 +137,6 @@ public class DrinkStockService {
         if (!customUserDetails.getRole().equals("ROLE_BOARD")) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
-
         Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
 
