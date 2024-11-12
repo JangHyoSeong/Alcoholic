@@ -21,23 +21,23 @@ def calculate_levenshtein_similarity(text1, text2):
 
 
 def find_most_similar_product(text, product_data):
+    # custom_text = text_to_jamo(preprocess_text(text))
     highest_similarity = 0
-    best_match = []
+    best_match = "Undefined"
 
     for product in product_data:
         en_name = product["enDrinkName"]
         kr_name = product["krDrinkName"]
 
-        en_similarity = calculate_levenshtein_similarity(custom_text, preprocess_text(en_name))
-        kr_similarity = calculate_levenshtein_similarity(custom_text, preprocess_text(kr_name))
+        en_similarity = calculate_levenshtein_similarity(text, en_name)
+        kr_similarity = calculate_levenshtein_similarity(text, kr_name)
 
-        similarity = max(en_similarity, kr_similarity)
-
-        if similarity > highest_similarity:
-            highest_similarity = similarity
-            best_match.clear()
-            best_match.append(product)
-        elif similarity == highest_similarity:
-            best_match.append(product)
-
+        if en_similarity > highest_similarity:
+            highest_similarity = en_similarity
+            best_match = en_name
+        if kr_similarity > highest_similarity:
+            highest_similarity = kr_similarity
+            best_match = kr_name
+            
+    # print(best_match, highest_similarity)
     return best_match, highest_similarity

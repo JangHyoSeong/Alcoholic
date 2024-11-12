@@ -24,7 +24,7 @@ def capture_image(filename="captured_image.jpg"):
     if ret:
         cv2.imwrite(filename, frame)
         print(f"image capture: {filename}")
-        show_image(filename)
+        # show_image(filename)
     else:
         print("image capture fail")
     cap.release()

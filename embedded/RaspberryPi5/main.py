@@ -27,14 +27,14 @@ def confirm_registration(product_name):
     gui.hide_result_screen()
 
     # 30초 동안 무게 감지 모니터링 (등록 대기 상태)
-    register_thread = threading.Thread(target=start_weight_data_monitoring, args=(True, ser), daemon=True)
+    register_thread = threading.Thread(target=start_weight_data_monitoring, args=(True, ser, product_name), daemon=True)
     register_thread.start()
 
     start_time = time.time()
     while time.time() - start_time < 30:
         # 스레드가 종료된 경우 (무게 감지로 등록이 완료됨)
         if not register_thread.is_alive():
-            register_drink(1, "test_drink", 1, "captured_image.jpg")
+            register_drink(1, product_name, 1, "captured_image.jpg")
             gui.status_label.configure(text=f"{product_name} 등록 완료")
             return  # 함수 종료
 

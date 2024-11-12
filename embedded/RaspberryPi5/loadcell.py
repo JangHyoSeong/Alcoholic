@@ -99,7 +99,7 @@ def get_inventory(refrigerator_id, ARR_LEN):
         print("요청 중 오류 발생:", e)
         return []
 
-def registration_detection(inventory, idx):
+def registration_detection(inventory, idx, product_name):
     if len(weight_queue) > 0 and weight_queue[-1][idx] >= THRESHOLD_WEIGHT and weight_cnt[idx] < DETECTION_THRESHOLD:
         weight_cnt[idx] += 1
     else:
@@ -107,8 +107,9 @@ def registration_detection(inventory, idx):
     if weight_cnt[idx] == DETECTION_THRESHOLD:
         ## POST 등록
         print("POST 요청을 위해 등록 감지됨:", idx + 1)  # 디버깅 메시지 추가
-        register_drink(refrigerator_id, "test_drink", idx+1, "captured_image.jpg")
+        register_drink(refrigerator_id, product_name, idx+1, "captured_image.jpg")
         inventory[idx] = True
+        # return # POST 요청 여기서 안할 시 return
 
 def removal_detection(inventory, idx):
     if len(weight_queue) > 0 and weight_queue[-1][idx] < THRESHOLD_WEIGHT and weight_cnt[idx] > 0:
@@ -120,7 +121,7 @@ def removal_detection(inventory, idx):
         delete_drink(refrigerator_id, idx+1)
         inventory[idx] = False
 
-def start_weight_data_monitoring(register_mode, ser):
+def start_weight_data_monitoring(register_mode, ser, product_name=None):
     """로드셀 데이터 모니터링 함수"""
     # ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     
@@ -141,7 +142,7 @@ def start_weight_data_monitoring(register_mode, ser):
 
                     for i in range(ARR_LEN):
                         if register_mode and not inventory[i]:
-                            registration_detection(inventory, i)
+                            registration_detection(inventory, i, product_name)
                         elif not register_mode and inventory[i]:
                             removal_detection(inventory, i)
                 time.sleep(0.1)
@@ -160,5 +161,5 @@ def start_weight_data_monitoring(register_mode, ser):
     finally:
         ser.close()
 
-if __name__ == "__main__":
-    start_weight_data_monitoring(False, ser)
+# if __name__ == "__main__":
+#     start_weight_data_monitoring(False, ser)
