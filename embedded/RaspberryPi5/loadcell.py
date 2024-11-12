@@ -112,11 +112,15 @@ def start_weight_data_monitoring():
         while True:
             if ser.in_waiting > 0:
                 data = list(map(int, ser.readline().decode('utf-8').strip().split()))
-                weight_queue.append(data)
+
+                if len(data) == ARR_LEN:
+                    weight_queue.append(data)
+                else:
+                    print(f"잘못된 데이터 길이: {data}")
 
                 for i in range(ARR_LEN):
                     if not inventory[i]:
-                        if weight_queue[-1][i] >= THRESHOLD_WEIGHT and weight_cnt[i] < DETECTION_THRESHOLD:
+                        if len(weight_queue) > 0 and weight_queue[-1][i] >= THRESHOLD_WEIGHT and weight_cnt[i] < DETECTION_THRESHOLD:
                             weight_cnt[i] += 1
                         else:
                             weight_cnt[i] = 0
@@ -125,7 +129,7 @@ def start_weight_data_monitoring():
                             register_drink(refrigerator_id, "test_drink", i+1, "captured_image.jpg")
                             inventory[i] = True
                     elif inventory[i]:
-                        if weight_queue[-1][i] < THRESHOLD_WEIGHT and weight_cnt[i] > 0:
+                        if len(weight_queue) > 0 and weight_queue[-1][i] < THRESHOLD_WEIGHT and weight_cnt[i] > 0:
                             weight_cnt[i] -= 1
                         else:
                             weight_cnt[i] = DETECTION_THRESHOLD
