@@ -45,7 +45,7 @@ public class CocktailController {
     @PostMapping
     public ResponseEntity<CommonResponse> createCocktail(
             @RequestPart(name = "cocktailData") CocktailCreateRequestDto requestDto,
-            @RequestPart(name = "image") MultipartFile image) {
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         return ResponseEntity.ok(cocktailService.createCocktail(requestDto, image));
     }
 
