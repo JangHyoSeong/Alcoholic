@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import tw from 'twrnc';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, TouchableOpacity } from 'react-native';
 import CustomFont from '@/components/common/CustomFont';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CocktailItem from '@/components/cocktail/CocktailItem';
 import { useAppStore } from '@/state/useAppStore';
 import { getCocktailList, searchCocktailList } from '@/api/cocktail';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
+import { RecipeNavigations } from '@/constants';
 
 const ITEMS_PER_PAGE = 4
 
 const CocktailSearch: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>()
   const token = useAppStore((state) => state.token);
   const [allCocktailData, setAllCocktailData] = useState([]);
   const [displayedCocktailData, setDisplayedCocktailData] = useState([])
@@ -30,6 +35,10 @@ const CocktailSearch: React.FC = () => {
       setIsFetching(false);
     }
   };
+
+  const handleAddCocktail = () => {
+    navigation.navigate(RecipeNavigations.RECIPE_ADD)
+  }
 
   const fetchSearchResults = async () => {
     if (!searchQuery.trim()) {
@@ -70,8 +79,8 @@ const CocktailSearch: React.FC = () => {
   }
 
   return (
-      <View style={tw`flex-1`}>
-        <View style={tw`flex-row mb-4`}>
+      <View style={tw`flex-1 bg-white`}>
+        <View style={tw`flex-row bg-gray-100 mb-4`}>
           <TextInput
             style={tw`flex-1 border opacity-50 rounded-lg p-2 border-gray-300`}
             placeholder="칵테일 이름을 검색하세요"
@@ -81,11 +90,16 @@ const CocktailSearch: React.FC = () => {
           />
           <Ionicons style={tw`absolute top-3 left-94 text-[22px]`} name='search' onPress={fetchSearchResults}/>
         </View>
-        <CocktailItem
-          cocktailData={displayedCocktailData}
-          onLoadMore={loadMoreData}
-          isFetching={isFetching}
-        />
+        <TouchableOpacity style={tw`absolute top-12 left-70 pb-1`} onPress={handleAddCocktail}>
+          <CustomFont style={tw`text-blue-300`}>칵테일을 추가하세요!</CustomFont>
+        </TouchableOpacity>
+        <View style={tw`pt-2`}>
+          <CocktailItem
+            cocktailData={displayedCocktailData}
+            onLoadMore={loadMoreData}
+            isFetching={isFetching}
+          />
+        </View>
       </View>
   );
 };
