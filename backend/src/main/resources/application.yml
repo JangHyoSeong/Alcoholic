@@ -11,6 +11,11 @@ spring:
   profiles:
     active: prod
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 30MB
+  
   jwt:
     secret: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
 
