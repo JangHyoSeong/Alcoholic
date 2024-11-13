@@ -113,17 +113,6 @@ def run_ocr():
         
     # YOLO 모델로 술 병 탐지
     bottle_coords = yolo_detect.detect_bottle(image_path)
-    img = cv2.imread(image_path)
-    
-    # 탐지된 병 영역별로 MobileNet 모델로 분류 수행
-    detected_bottles = []
-    for (x1, y1, x2, y2) in bottle_coords:
-        bottle_img = img[y1:y2, x1:x2]
-        bottle_label = mobilenet_classify.classify_bottle(bottle_img)
-        detected_bottles.append(bottle_label)
-    
-    print("Detected bottles:", detected_bottles)
-        
 
 if __name__ == "__main__":
     run_ocr()
