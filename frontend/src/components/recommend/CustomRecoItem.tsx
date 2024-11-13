@@ -8,30 +8,30 @@ import { colors } from '@/constants';
 import { useNavigation } from '@react-navigation/native';
 import { RecipeNavigations } from '@/constants';
 
-
-interface PopularCocktailData {
+interface CustomCocktailData {
   id : number;
   enCocktailName : string;
   krCocktailName : string;
   value : number;
   image : string;
   instruction : string;
+  alcoholCategoriesName: string[];
 }
 
-interface PopCockItemProps {
-  result : PopularCocktailData[]
+interface CusCockItemProps {
+  result : CustomCocktailData[]
   onLoadMore: () => void
   isFetching : boolean;
 }
 
-const PopularRecoItem: React.FC<PopCockItemProps> = ({ result, onLoadMore, isFetching }) => {
+const CustomRecoItem: React.FC<CusCockItemProps> = ({ result, onLoadMore, isFetching }) => {
   const navigation = useNavigation<any>()
 
   const handlePressButton = async (cocktailId : number) => {
     navigation.navigate('Recipe', {screen : RecipeNavigations.RECIPE_DETAIL, params: {cocktailId}})
   }
 
-  const renderItem = ({ item } : { item : PopularCocktailData}) => (
+  const renderItem = ({ item } : { item : CustomCocktailData}) => (
     <View key={item.id} style={[tw`flex flex-row bg-purple-200 
       mb-4 rounded-lg mx-2 items-center`, {elevation: 3}]}>
         <Image
@@ -41,12 +41,14 @@ const PopularRecoItem: React.FC<PopCockItemProps> = ({ result, onLoadMore, isFet
         <View style={tw`flex flex-col w-2/3`}>
           <CustomFont style={tw`pl-7 pb-2 text-[20px]`} fontWeight="bold">{item.krCocktailName}</CustomFont>
           <CustomFont style={tw`pl-7 pb-2 text-gray-400 text-[17px] `}>{item.enCocktailName}</CustomFont>
+          <CustomFont style={tw`pl-7 pb-2 text-gray-400 text-[17px] `}>{item.alcoholCategoriesName}</CustomFont>
         </View>
         <TouchableOpacity onPress={() => handlePressButton(item.id)}>
           <Ionicons name={'arrow-forward-circle'} size={27} color={colors.PURPLE.BASE}/>
         </TouchableOpacity>
       </View>
   )
+  
   return (
     <SafeAreaView>
       <FlatList
@@ -61,4 +63,4 @@ const PopularRecoItem: React.FC<PopCockItemProps> = ({ result, onLoadMore, isFet
   );
 };
 
-export default PopularRecoItem;
+export default CustomRecoItem;
