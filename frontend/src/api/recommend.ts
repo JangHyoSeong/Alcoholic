@@ -1,14 +1,5 @@
 import axiosInstance from "./axios";
 
-interface RecoCocktail {
-  id : number;
-  enCocktailName : string;
-  krCocktailName : string;
-  value : number; // 검색량
-  image : string;
-  instruction : string;
-}
-
 const getPopularCock = async ( token: string ) => {
   try {
     const response = await axiosInstance.get(`/cocktails/popularity`, {
@@ -22,4 +13,17 @@ const getPopularCock = async ( token: string ) => {
   }
 }
 
-export { getPopularCock }
+const getCustomCock = async ( token: string ) => {
+  try {
+    const response = await axiosInstance.get(`/cocktails/stock`, {
+      headers: {
+        Authorization: token
+      }
+    })
+    return response.data.result
+  } catch (error) {
+    console.error('커스텀 추천 실패')
+  }
+}
+
+export { getPopularCock, getCustomCock }

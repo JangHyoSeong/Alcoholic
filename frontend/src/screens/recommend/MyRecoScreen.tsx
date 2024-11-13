@@ -1,13 +1,71 @@
-import styled from 'styled-components/native';
+import React, { useEffect, useState } from 'react';
+import tw from 'twrnc';
+import { View, TouchableOpacity, FlatList } from 'react-native';
+import CustomFont from '@/components/common/CustomFont';
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import { useAppStore } from '@/state/useAppStore';
+import { getCustomCock } from '@/api/recommend';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomRecoItem from '@/components/recommend/CustomRecoItem';
 
-const MyRecoScreen = () => {
- return (
- <MyRecoScreenBlock>
- 
- </MyRecoScreenBlock>
- );
+const ITEMS_PER_PAGE = 4
+
+const MyRecoScreen: React.FC = () => {
+  const navigation = useNavigation()
+  const token = useAppStore((state) => state.token)
+  const [ cusCocktailData, setCusCocktailData ] = useState([])
+  const [ displayedCocktailData , setDisplayedCocktailData ] = useState([])
+  const [ currentPage, setCurrentPage ] = useState(1)
+  const [ isFetching, setIsFetching ] = useState(false)
+  
+  const fetchCusCocktails = async () => {
+    try {
+      setIsFetching(true)
+      const data = await getCustomCock(token)
+      setCusCocktailData(data)
+      setDisplayedCocktailData(data.slice(0, ITEMS_PER_PAGE))
+    } catch (error) {
+      console.error('인기 추천 받아오기 실패')
+    } finally {
+      setIsFetching(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCusCocktails()
+  }, [])
+
+  const loadMoreData = () => {
+    if (isFetching) {
+      return
+    }
+
+    const nextPage = currentPage + 1
+    const startIdx = (nextPage - 1) * ITEMS_PER_PAGE
+    const endIdx = nextPage * ITEMS_PER_PAGE
+
+    setDisplayedCocktailData((prevData) => [
+      ...prevData,
+      ...cusCocktailData.slice(startIdx, endIdx)
+    ])
+    setCurrentPage(nextPage)
+  }
+  
+  return (
+    <SafeAreaView style={tw`bg-white`}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Ionicons style={tw`p-2`} name="arrow-back-outline" size={30} />
+      </TouchableOpacity>
+      <View style={tw`pt-2`}>
+        <CustomRecoItem
+          result={displayedCocktailData}
+          onLoadMore={loadMoreData}
+          isFetching={isFetching}
+        />
+      </View>
+    </SafeAreaView>
+  );
 };
-
-const MyRecoScreenBlock = styled.View``;
 
 export default MyRecoScreen;
