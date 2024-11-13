@@ -67,16 +67,18 @@ const addCocktail = async (token: string, cocktail:Cocktail ) => {
     instruction : cocktail.instruction,
     ingredients : cocktail.ingredients,
   }
-  
-  formData.append('cocktailData', {"string": JSON.stringify(cocktail), type: "application/json"})
-  formData.append("image", {uri: cocktail.image, type: "image/jpeg"});
 
-  // if (cocktail.image) {
-  //   formData.append('image', cocktail.image)
-  // }
-  // else {
-  //   formData.append('image', null);
-  // }
+  formData.append('cocktailData', {"string": JSON.stringify(cocktail), type: "application/json"})
+
+  if (cocktail.image) {
+    formData.append('image', {
+      uri: cocktail.image,
+      type: 'image/jpeg',
+      name: 'cocktail_image.jpg',
+    });
+  } else {
+    formData.append('image', null);
+  }
 
   try {
     const response = await axiosInstance.post(`/cocktails`, formData,{
