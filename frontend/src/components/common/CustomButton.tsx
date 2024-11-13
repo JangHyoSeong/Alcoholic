@@ -86,7 +86,8 @@ const ButtonContent = styled(View)<{ size: string }>`
 const ButtonText = styled(Text)<{ variant: string }>`
   color: ${({ variant }) => (variant === 'filled' ? 'white' : colors.PURPLE.BASE)};
   font-size: 16px;
-  margin-left: 8px;
+  margin-bottom: 2px;
+  /* margin-left: 8px; */
 `;
 
 export default CustomButton;
