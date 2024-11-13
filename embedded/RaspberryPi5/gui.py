@@ -28,9 +28,9 @@ class GUI:
         self.register_button.pack(pady=20)
 
         # 기본 이미지 설정 (가상의 이미지 사용)
-        sample_image = Image.open("captured_image.jpg")  # 실제 이미지 경로 지정
-        sample_image = sample_image.resize((200, 200))
-        self.captured_img = ImageTk.PhotoImage(sample_image)
+        # sample_image = Image.open("captured_image.jpg")  # 실제 이미지 경로 지정
+        # sample_image = sample_image.resize((200, 200))
+        # self.captured_img = ImageTk.PhotoImage(sample_image)
 
         # OCR 결과 화면 요소
         self.captured_image_label = ctk.CTkLabel(root)
@@ -48,12 +48,21 @@ class GUI:
     def show_result_screen(self, product_name):
         # OCR 결과 화면 전환
         self.register_button.pack_forget()  # "등록하기" 버튼 숨김
-        self.status_label.configure(text=f"{product_name}를 등록하시겠습니까?")
+        self.status_label.configure(text=f"{product_name} 등록하시겠습니까?")
         self.product_label.configure(text=product_name)
         self.product_label.pack(pady=10)  # 제품명 라벨 표시
-        self.captured_image_label.configure(image=self.captured_img)
-        self.captured_image_label.pack(pady=10)  # 이미지 표시
+        # self.captured_image_label.configure(image=self.captured_img)
+        # self.captured_image_label.pack(pady=10)  # 이미지 표시
         
+        try:
+            sample_image = Image.open("captured_image.jpg")  # 최신 이미지 파일 경로
+            sample_image = sample_image.resize((200, 200))
+            self.captured_img = ImageTk.PhotoImage(sample_image)
+            self.captured_image_label.configure(image=self.captured_img)
+            self.captured_image_label.pack(pady=10)  # 이미지 표시
+        except Exception as e:
+            print(f"이미지 로드 오류: {e}")
+
         # "예", "다시 촬영하기", "직접 등록하기" 버튼 표시
         self.confirm_button.pack(pady=5)
         self.retake_button.pack(pady=5)
@@ -88,3 +97,13 @@ class GUI:
         self.manual_button.pack_forget()
         self.manual_entry.pack(pady=10)
         self.submit_button.pack(pady=10)
+
+    def reset_to_initial_state(self):
+        """초기 상태로 되돌리는 함수"""
+        self.status_label.configure(text="주류 냉장고에 제품을 등록하세요")
+        self.captured_image_label.pack_forget()
+        self.product_label.pack_forget()
+        self.confirm_button.pack_forget()
+        self.retake_button.pack_forget()
+        self.manual_button.pack_forget()
+        self.register_button.pack(pady=20)  # "등록하기" 버튼 다시 표시

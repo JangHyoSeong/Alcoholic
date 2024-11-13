@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from collections import deque
 import os
 import requests
+import threading
 
 load_dotenv()
 server_api_url = os.getenv("SERVER_API_URL")
@@ -17,6 +18,8 @@ DETECTION_THRESHOLD = 2
 THRESHOLD_WEIGHT = 200
 refrigerator_id = 1
 
+# register_event = threading.Event()
+register_event = False
 
 def register_drink(refrigerator_id, drink_name, position, image_path):
     url = f"{server_api_url}/refrigerators/admin/{refrigerator_id}"
@@ -100,6 +103,8 @@ def get_inventory(refrigerator_id, ARR_LEN):
         return []
 
 def registration_detection(inventory, idx, product_name):
+    global registration_successful
+
     if len(weight_queue) > 0 and weight_queue[-1][idx] >= THRESHOLD_WEIGHT and weight_cnt[idx] < DETECTION_THRESHOLD:
         weight_cnt[idx] += 1
     else:
@@ -107,9 +112,13 @@ def registration_detection(inventory, idx, product_name):
     if weight_cnt[idx] == DETECTION_THRESHOLD:
         ## POST 등록
         print("POST 요청을 위해 등록 감지됨:", idx + 1)  # 디버깅 메시지 추가
-        register_drink(refrigerator_id, product_name, idx+1, "captured_image.jpg")
-        inventory[idx] = True
-        # return # POST 요청 여기서 안할 시 return
+        result = register_drink(refrigerator_id, product_name, idx+1, "captured_image.jpg")
+        
+        if result is not None:  # POST 요청 성공 시 등록 완료로 플래그 설정
+            print("ok")
+            registration_successful = True
+            inventory[idx] = True
+
 
 def removal_detection(inventory, idx):
     if len(weight_queue) > 0 and weight_queue[-1][idx] < THRESHOLD_WEIGHT and weight_cnt[idx] > 0:
@@ -121,45 +130,86 @@ def removal_detection(inventory, idx):
         delete_drink(refrigerator_id, idx+1)
         inventory[idx] = False
 
-def start_weight_data_monitoring(register_mode, ser, product_name=None):
-    """로드셀 데이터 모니터링 함수"""
-    # ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    
+def start_registration_monitoring(ser, product_name=None):
+    """등록 모드에서 로드셀 데이터 모니터링 함수"""
+    global registration_successful, register_event
+    registration_successful = False
+
+    # 등록 이벤트 활성화 (삭제 모드가 대기하도록 설정)
+    register_event = True
+
     inventory = get_inventory(refrigerator_id, ARR_LEN)
     time.sleep(2)  # 시리얼 초기화 대기
 
     try:
         while True:
-            try:
-                if ser.in_waiting > 0:
-                    data = list(map(int, ser.readline().decode('utf-8').strip().split()))
+            if ser.in_waiting > 0:
+                data = list(map(int, ser.readline().decode('utf-8').strip().split()))
 
-                    if len(data) == ARR_LEN:
-                        weight_queue.append(data)
-                    else:
-                        print(f"잘못된 데이터 길이: {data}")
-                        continue
+                if len(data) == ARR_LEN:
+                    weight_queue.append(data)
+                else:
+                    print(f"잘못된 데이터 길이: {data}")
+                    continue
 
-                    for i in range(ARR_LEN):
-                        if register_mode and not inventory[i]:
-                            registration_detection(inventory, i, product_name)
-                        elif not register_mode and inventory[i]:
-                            removal_detection(inventory, i)
-                time.sleep(0.1)
+                for i in range(ARR_LEN):
+                    # 등록 모드 로직
+                    if not inventory[i]:
+                        registration_detection(inventory, i, product_name)
+                        if registration_successful:
+                            # 등록 완료 시 이벤트 비활성화하고 함수 종료
+                            # register_event.clear()
+                            register_event = False
+                            return
 
-            except serial.SerialException as e:
-                print(f"시리얼 연결 문제 발생: {e}")
-                time.sleep(1)  # 재시도 전 대기 시간
-                continue  # 시리얼 연결 예외 시 재시도
+            time.sleep(0.2)
+
+    except serial.SerialException as e:
+        print(f"시리얼 연결 문제 발생: {e}")
+        time.sleep(1)
+    finally:
+        # ser.close()
+        # register_event.clear()
+        register_event = False
+
+def start_delete_monitoring(ser):
+    """삭제 모드에서 로드셀 데이터 모니터링 함수 (항상 동작)"""
+    global register_event
+    
+    time.sleep(1)  # 시리얼 초기화 대기
+
+    try:
+        while True:
+            # 등록 모드가 실행 중일 때는 대기
+            if register_event:
+                time.sleep(1)
+                continue
+
+            inventory = get_inventory(refrigerator_id, ARR_LEN)
+            # register_event.wait()
             
-            except ValueError as e:
-                print(f"데이터 변환 오류: {e}, 수신 데이터: {data}")
-                continue  # 잘못된 데이터 형식일 경우 건너뜀
-            
-    except KeyboardInterrupt:
-        print("프로그램 종료")
+            if ser.in_waiting > 0:    
+                data = list(map(int, ser.readline().decode('utf-8').strip().split()))
+
+                if len(data) == ARR_LEN:
+                    weight_queue.append(data)
+                else:
+                    print(f"잘못된 데이터 길이: {data}")
+                    continue
+
+                for i in range(ARR_LEN):
+                    # 삭제 모드 로직
+                    if inventory[i]:
+                        removal_detection(inventory, i)
+
+            time.sleep(1)
+
+    except serial.SerialException as e:
+        print(f"시리얼 연결 문제 발생: {e}")
+        time.sleep(1)
     finally:
         ser.close()
 
+        
 # if __name__ == "__main__":
 #     start_weight_data_monitoring(False, ser)
