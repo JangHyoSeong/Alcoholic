@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import tw from 'twrnc';
-import { View, TextInput, Alert, ScrollView } from 'react-native';
+import { View, TextInput, Alert, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'react-native-image-picker';
 import CustomButton from '@/components/common/CustomButton';
 import CustomFont from '@/components/common/CustomFont';
 import { useNavigation } from '@react-navigation/native';
@@ -14,7 +15,7 @@ import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
 const CustomCocktailScreen: React.FC = () => {
   const [ enCocktailName, setEnCocktailName ] = useState('')
   const [ krCocktailName, setKrCocktailName ] = useState('')
-  const [ image, setImage ] = useState('')
+  const [ imageUri, setImageUri ] = useState<string | undefined>(undefined)
   const [ instruction, setInstruction ] = useState('')
   const [ ingredients, setIngredients ] = useState<Ingredient[]>([
     // { categoryId: 0, ingredient: '', measure: '' }
@@ -22,6 +23,16 @@ const CustomCocktailScreen: React.FC = () => {
   const [ categoryId, setCategoryId ] = useState(1)
   const token = useAppStore((state) => state.token)
   const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>()
+
+  const handleChooseImage = async () => {
+    const result = await ImagePicker.launchImageLibrary({ mediaType: 'photo'})
+    const uri = result.assets?.[0]?.uri
+    if (uri) {
+      setImageUri(uri)
+    } else {
+      console.log('이미지 선택 취소 또는 오류 발생');
+    }
+  }
 
   const handleSubmit = async () => {
     if (!enCocktailName || !krCocktailName || !instruction) {
@@ -38,7 +49,7 @@ const CustomCocktailScreen: React.FC = () => {
     const cocktail:Cocktail = {
       enCocktailName,
       krCocktailName,
-      image,
+      image: imageUri,
       instruction,
       ingredients: formattedIngredients
     }
@@ -72,12 +83,15 @@ const CustomCocktailScreen: React.FC = () => {
         value={krCocktailName}
         onChangeText={setKrCocktailName}
       />
-      <TextInput
-        style={tw`border border-gray-300 rounded p-3 mb-3`}
-        placeholder="이미지 URL"
-        value={image}
-        onChangeText={setImage}
-      />
+      <TouchableOpacity onPress={handleChooseImage} style={tw`mb-4`}>
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={tw`w-40 h-40 rounded`} />
+        ) : (
+          <View style={tw`w-40 h-40 bg-gray-200 rounded justify-center items-center`}>
+            <CustomFont>이미지 선택</CustomFont>
+          </View>
+        )}
+      </TouchableOpacity>
       <TextInput
         style={tw`border border-gray-300 rounded p-3 mb-3`}
         placeholder="조리 방법"
