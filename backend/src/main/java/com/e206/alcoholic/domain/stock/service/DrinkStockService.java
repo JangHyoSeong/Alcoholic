@@ -90,7 +90,6 @@ public class DrinkStockService {
 
         String imageURL = requestDto.getImage() != null ? s3ImageService.upload(requestDto.getImage()) : null;
         DrinkStock drinkStock = DrinkStock.of(imageURL, refrigerator, drink, position, requestDto.getDrinkName());
-
         drinkStockRepository.save(drinkStock);
         return new CommonResponse("ok");
     }
