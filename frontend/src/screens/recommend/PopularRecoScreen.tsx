@@ -9,7 +9,7 @@ import { getPopularCock } from '@/api/recommend';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PopularRecoItem from '@/components/recommend/PopularRecoItem';
 
-const ITEMS_PER_PAGE = 4
+const ITEMS_PER_PAGE = 8
 
 const PopularRecoScreen: React.FC = () => {
   const navigation = useNavigation()

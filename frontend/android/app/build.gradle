@@ -77,6 +77,10 @@ project.ext.react = [
 ]
 
 android {
+    aaptOptions {
+        cruncherEnabled = false
+        useNewCruncher = false
+    }
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion

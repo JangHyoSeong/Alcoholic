@@ -9,7 +9,7 @@ import { getCustomCock } from '@/api/recommend';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomRecoItem from '@/components/recommend/CustomRecoItem';
 
-const ITEMS_PER_PAGE = 4
+const ITEMS_PER_PAGE = 8
 
 const MyRecoScreen: React.FC = () => {
   const navigation = useNavigation()

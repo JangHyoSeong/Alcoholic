@@ -8,7 +8,7 @@ import DrinkItem from '@/components/drink/DrinkItem';
 import { useAppStore } from '@/state/useAppStore';
 import { getDrinkList, getDrinkCategory } from '@/api/drink';
 
-const ITEMS_PER_PAGE = 4
+const ITEMS_PER_PAGE = 8
 const categories = [
   { id: 1, name: '증류주' },
   { id: 2, name: '맥주' },

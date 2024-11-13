@@ -11,7 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
 import { RecipeNavigations } from '@/constants';
 
-const ITEMS_PER_PAGE = 4
+const ITEMS_PER_PAGE = 8
 
 const CocktailSearch: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>()
