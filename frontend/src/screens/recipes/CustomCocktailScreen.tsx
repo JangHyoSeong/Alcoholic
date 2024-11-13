@@ -17,7 +17,7 @@ const CustomCocktailScreen: React.FC = () => {
   const [ image, setImage ] = useState('')
   const [ instruction, setInstruction ] = useState('')
   const [ ingredients, setIngredients ] = useState<Ingredient[]>([
-    { categoryId: 0, ingredient: '', measure: '' }
+    // { categoryId: 0, ingredient: '', measure: '' }
   ])
   const [ categoryId, setCategoryId ] = useState(1)
   const token = useAppStore((state) => state.token)
@@ -45,7 +45,6 @@ const CustomCocktailScreen: React.FC = () => {
 
     try {
       await addCocktail(token, cocktail)
-      console.log('커스텀 칵테일 등록 성공')
       navigation.goBack()
     } catch (error) {
       console.error('커스텀 칵테일 등록 실패')
