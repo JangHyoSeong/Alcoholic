@@ -24,7 +24,7 @@ const registerUser = async (user:User): Promise<User | string> => {
   }
 }
 
-const loginUser = async (username: string, password: string): Promise<string> => {
+const loginUser = async (username: string, password: string) => {
   try {
     const {data, headers} = await axiosInstance.post(`/auth/login`, {
       username,
@@ -36,7 +36,6 @@ const loginUser = async (username: string, password: string): Promise<string> =>
     return token
   } catch (error: any) {
     console.error('로그인 에러', error.message)
-    return error
   }
 }
 

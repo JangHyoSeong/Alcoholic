@@ -34,6 +34,7 @@ const LoginScreen = ({ navigation }: AuthHomeProps) => {
         setError('토큰을 받지 못했습니다.')
       }
     } catch (error: any) {
+      setLogin(false)
       console.error('로그인 오류')
     }
   }
