@@ -2,7 +2,7 @@ import customtkinter as ctk
 import threading
 import time
 from gui import GUI
-from loadcell import start_weight_data_monitoring, register_drink
+from loadcell import start_registration_monitoring, start_delete_monitoring, register_drink
 from OCR import run_ocr
 import serial
 
@@ -12,7 +12,7 @@ ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 def start_ocr():
     """OCR을 실행하고 결과를 GUI에 전달"""
     gui.status_label.configure(text="라벨 인식 중...")
-    app.update()
+    app.update_idletasks()  # 필요한 부분만 갱신
 
     product_name = run_ocr()
     gui.show_result_screen(product_name)
@@ -27,22 +27,25 @@ def confirm_registration(product_name):
     gui.hide_result_screen()
 
     # 30초 동안 무게 감지 모니터링 (등록 대기 상태)
-    register_thread = threading.Thread(target=start_weight_data_monitoring, args=(True, ser, product_name), daemon=True)
+    register_thread = threading.Thread(target=start_registration_monitoring, args=(ser, product_name), daemon=True)
     register_thread.start()
 
     start_time = time.time()
     while time.time() - start_time < 30:
         # 스레드가 종료된 경우 (무게 감지로 등록이 완료됨)
         if not register_thread.is_alive():
-            register_drink(1, product_name, 1, "captured_image.jpg")
             gui.status_label.configure(text=f"{product_name} 등록 완료")
+            
+            gui.root.after(2000, gui.reset_to_initial_state)
             return  # 함수 종료
 
         app.update_idletasks()
         time.sleep(0.1)
 
     gui.status_label.configure(text="등록 실패: 제품을 올리지 않았습니다.")
-    
+    gui.root.after(2000, gui.reset_to_initial_state)
+
+
 def start_gui():
     """GUI 초기화 및 실행"""
     global app, gui
@@ -50,7 +53,7 @@ def start_gui():
     gui = GUI(app, start_ocr, manual_entry, confirm_registration)
 
     # DELETE 모니터링 모드는 백그라운드 스레드에서 항상 실행
-    delete_monitor_thread = threading.Thread(target=start_weight_data_monitoring, args=(False, ser), daemon=True)
+    delete_monitor_thread = threading.Thread(target=start_delete_monitoring, args=(ser,), daemon=True)
     delete_monitor_thread.start()
 
     app.mainloop()
