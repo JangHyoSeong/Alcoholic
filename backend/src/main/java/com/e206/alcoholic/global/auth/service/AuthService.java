@@ -4,6 +4,7 @@ import com.e206.alcoholic.domain.user.entity.User;
 import com.e206.alcoholic.global.auth.dto.SignUpDto;
 import com.e206.alcoholic.global.auth.dto.request.SignUpRequestDto;
 import com.e206.alcoholic.global.auth.dto.response.AuthResponseDto;
+import com.e206.alcoholic.global.auth.dto.response.UsernameCheckResponseDto;
 import com.e206.alcoholic.global.auth.repository.AuthRepository;
 import com.e206.alcoholic.global.error.CustomException;
 import com.e206.alcoholic.global.error.ErrorCode;
@@ -35,5 +36,12 @@ public class AuthService {
         // 회원가입 진행
         User user = User.toUserFromSignUpRequestDto(signUpDto);
         return new AuthResponseDto(authRepository.save(user));
+    }
+
+    @Transactional
+    public UsernameCheckResponseDto checkUsernameDuplicated(String username) {
+        return UsernameCheckResponseDto.builder()
+                .isDuplicated(authRepository.existsByUsername(username) ? "True" : "False")
+                .build();
     }
 }
