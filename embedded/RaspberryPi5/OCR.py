@@ -98,6 +98,7 @@ def extract_text_from_result(result):
             texts.append(infer_result.get("inferText"))
     return " ".join(texts)
 
+    
 def run_ocr():
     image_path = "captured_image.jpg"
 
@@ -123,6 +124,7 @@ def run_ocr():
         
     # YOLO 모델로 술 병 탐지
     bottle_coords = yolo_detect.detect_bottle(image_path)
+        
 
 if __name__ == "__main__":
     run_ocr()
