@@ -12,7 +12,7 @@ def detect_bottle(image_path):
     img = cv2.imread(image_path)
     
     # 탐지 수행
-    results = model(img, conf=0.9)
+    results = yolo_model(img, conf=0.9)
 
     # 신뢰도 임계값 설정
     threshold = 0.9
@@ -26,5 +26,5 @@ def detect_bottle(image_path):
         if confidence < threshold:  # 신뢰도가 낮으면 "unknown"
             print("탐지 결과: Unknown")
         else:  # 신뢰도가 높으면 클래스명 출력
-            class_name = model.names[class_id]  # 클래스 이름
+            class_name = yolo_model.names[class_id]  # 클래스 이름
             print(f"탐지된 객체: {class_name}, 신뢰도: {confidence:.2f}")
