@@ -1,12 +1,9 @@
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import messagebox
-import subprocess
-from PIL import Image, ImageTk  # 이미지를 표시하기 위한 라이브러리
-import time
-from OCR import run_ocr
-
+from PIL import Image, ImageTk
 import os
+
 os.environ["DISPLAY"] = ":0"
 
 class GUI:
@@ -17,58 +14,54 @@ class GUI:
         self.confirm_registration_callback = confirm_registration_callback
 
         self.root.title("주류 냉장고 등록")
-        self.root.geometry("400x500")
+        # self.root.attributes("-fullscreen", True)  # 전체 화면으로 설정
 
         # 상태 표시 라벨
-        self.status_label = ctk.CTkLabel(root, text="주류 냉장고에 제품을 등록하세요", font=("Arial", 16))
-        self.status_label.pack(pady=10)
+        self.status_label = ctk.CTkLabel(root, text="주류 냉장고에 제품을 등록하세요", font=("Arial", 15))
+        self.status_label.pack(pady=20)
 
         # "등록하기" 버튼
-        self.register_button = ctk.CTkButton(root, text="등록하기", command=self.start_ocr_callback, font=("Arial", 14))
-        self.register_button.pack(pady=20)
-
-        # 기본 이미지 설정 (가상의 이미지 사용)
-        # sample_image = Image.open("captured_image.jpg")  # 실제 이미지 경로 지정
-        # sample_image = sample_image.resize((200, 200))
-        # self.captured_img = ImageTk.PhotoImage(sample_image)
+        self.register_button = ctk.CTkButton(root, text="등록하기", command=self.start_ocr_callback, font=("Arial", 15), width=250, height=50)
+        self.register_button.pack(pady=30)
 
         # OCR 결과 화면 요소
-        self.captured_image_label = ctk.CTkLabel(root)
-        self.product_label = ctk.CTkLabel(root, text="", font=("Arial", 14))
+        self.captured_image_label = ctk.CTkLabel(root, text="")
+        self.product_label = ctk.CTkLabel(root, text="", font=("Arial", 15))
 
         # OCR 후 버튼들
-        self.confirm_button = ctk.CTkButton(root, text="예", command=lambda: self.confirm_registration_callback(self.product_label.cget("text")), width=100)
-        self.retake_button = ctk.CTkButton(root, text="다시 촬영하기", command=self.start_ocr_callback, width=100)
-        self.manual_button = ctk.CTkButton(root, text="직접 등록하기", command=self.manual_entry_callback, width=100)
+        self.confirm_button = ctk.CTkButton(root, text="예", command=lambda: self.confirm_registration_callback(self.product_label.cget("text")), width=250, height=50, font=("Arial", 15))
+        self.retake_button = ctk.CTkButton(root, text="다시 촬영하기", command=self.start_ocr_callback, width=250, height=50, font=("Arial", 15))
+        self.manual_button = ctk.CTkButton(root, text="직접 등록하기", command=self.manual_entry_callback, width=250, height=50, font=("Arial", 15))
 
         # 수기 입력 화면 요소
-        self.manual_entry = ctk.CTkEntry(root, font=("Arial", 12))
-        self.submit_button = ctk.CTkButton(root, text="등록", command=self.submit_manual_entry, width=100)
+        self.manual_entry = ctk.CTkEntry(root, font=("Arial", 15), width=250)
+        self.submit_button = ctk.CTkButton(root, text="등록", command=self.submit_manual_entry, width=250, height=50, font=("Arial", 15))
+
 
     def show_result_screen(self, product_name):
-        # OCR 결과 화면 전환
         self.register_button.pack_forget()  # "등록하기" 버튼 숨김
-        self.status_label.configure(text=f"{product_name} 등록하시겠습니까?")
-        self.product_label.configure(text=product_name)
-        self.product_label.pack(pady=10)  # 제품명 라벨 표시
-        # self.captured_image_label.configure(image=self.captured_img)
-        # self.captured_image_label.pack(pady=10)  # 이미지 표시
-        
+
         try:
-            sample_image = Image.open("captured_image.jpg")  # 최신 이미지 파일 경로
-            sample_image = sample_image.resize((200, 200))
-            self.captured_img = ImageTk.PhotoImage(sample_image)
+            sample_image = Image.open("captured_image.jpg")  # 이미지 파일 경로
+            self.captured_img = ctk.CTkImage(sample_image, size=(200, 200))
             self.captured_image_label.configure(image=self.captured_img)
-            self.captured_image_label.pack(pady=10)  # 이미지 표시
+            self.captured_image_label.pack(pady=20)
         except Exception as e:
             print(f"이미지 로드 오류: {e}")
 
+        if product_name is not None:
+            self.status_label.configure(text=f"{product_name} 등록하시겠습니까?")
+            self.product_label.configure(text=product_name)
         # "예", "다시 촬영하기", "직접 등록하기" 버튼 표시
-        self.confirm_button.pack(pady=5)
-        self.retake_button.pack(pady=5)
-        self.manual_button.pack(pady=5)
+            self.confirm_button.pack(pady=10)
+            self.retake_button.pack(pady=10)
+            self.manual_button.pack(pady=10)
 
-        # 강제로 화면 갱신
+        else:
+            self.status_label.configure(text="다시 촬영해주세요")
+            self.retake_button.pack(pady=10)
+        
+        self.retake_button.configure(state="normal")
         self.root.update_idletasks()
 
     def hide_result_screen(self):
@@ -77,8 +70,8 @@ class GUI:
         self.retake_button.pack_forget()
         self.manual_button.pack_forget()
 
-    def confirm_registration(self):
-        messagebox.showinfo("등록", "제품이 등록되었습니다.")
+    # def confirm_registration(self):
+    #     messagebox.showinfo("등록", "제품이 등록되었습니다.")
 
     def submit_manual_entry(self):
         product_name = self.manual_entry.get()
@@ -88,22 +81,20 @@ class GUI:
             messagebox.showwarning("입력 오류", "제품명을 입력해 주세요.")
 
     def manual_entry_screen(self):
-        # 수기 입력 화면으로 전환
         self.status_label.configure(text="제품명을 입력하세요:")
         self.product_label.pack_forget()
         self.captured_image_label.pack_forget()
         self.confirm_button.pack_forget()
         self.retake_button.pack_forget()
         self.manual_button.pack_forget()
-        self.manual_entry.pack(pady=10)
-        self.submit_button.pack(pady=10)
+        self.manual_entry.pack(pady=20)
+        self.submit_button.pack(pady=20)
 
     def reset_to_initial_state(self):
-        """초기 상태로 되돌리는 함수"""
         self.status_label.configure(text="주류 냉장고에 제품을 등록하세요")
         self.captured_image_label.pack_forget()
         self.product_label.pack_forget()
         self.confirm_button.pack_forget()
         self.retake_button.pack_forget()
         self.manual_button.pack_forget()
-        self.register_button.pack(pady=20)  # "등록하기" 버튼 다시 표시
+        self.register_button.pack(pady=30)
