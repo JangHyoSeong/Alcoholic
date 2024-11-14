@@ -6,6 +6,7 @@ import com.e206.alcoholic.domain.cocktail.dto.response.CocktailInventoryResponse
 import com.e206.alcoholic.domain.cocktail.dto.response.CocktailListResponseDto;
 import com.e206.alcoholic.domain.cocktail.service.CocktailService;
 import com.e206.alcoholic.global.common.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +45,7 @@ public class CocktailController {
     // 커스텀 칵테일 등록
     @PostMapping
     public ResponseEntity<CommonResponse> createCocktail(
-            @RequestPart(name = "cocktailData") CocktailCreateRequestDto requestDto,
+            @Valid @RequestPart(name = "cocktailData") CocktailCreateRequestDto requestDto,
             @RequestPart(value = "image", required = false) MultipartFile image) {
         return ResponseEntity.ok(cocktailService.createCocktail(requestDto, image));
     }
