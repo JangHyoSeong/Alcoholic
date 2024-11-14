@@ -11,9 +11,14 @@ ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 
 def start_ocr():
     """OCR을 실행하고 결과를 GUI에 전달"""
+    gui.register_button.pack_forget()
+    gui.confirm_button.pack_forget()
+    gui.retake_button.pack_forget()
+    gui.manual_button.pack_forget()
+
     gui.status_label.configure(text="라벨 인식 중...")
     app.update_idletasks()  # 필요한 부분만 갱신
-
+    
     product_name = run_ocr()
     gui.show_result_screen(product_name)
 

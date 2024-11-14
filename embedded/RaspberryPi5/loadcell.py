@@ -15,7 +15,7 @@ weight_queue = deque(maxlen=3)
 weight_cnt = [0,0,0,0]
 ARR_LEN = 4
 DETECTION_THRESHOLD = 2
-THRESHOLD_WEIGHT = 200
+THRESHOLD_WEIGHT = 120
 refrigerator_id = 1
 
 # register_event = threading.Event()
