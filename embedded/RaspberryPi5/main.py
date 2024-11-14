@@ -36,21 +36,26 @@ def confirm_registration(product_name):
         if not register_thread.is_alive():
             gui.status_label.configure(text=f"{product_name} 등록 완료")
             
-            gui.root.after(2000, gui.reset_to_initial_state)
+            gui.root.after(3000, gui.reset_to_initial_state)
             return  # 함수 종료
 
         app.update_idletasks()
         time.sleep(0.1)
 
     gui.status_label.configure(text="등록 실패: 제품을 올리지 않았습니다.")
-    gui.root.after(2000, gui.reset_to_initial_state)
+    gui.root.after(3000, gui.reset_to_initial_state)
 
+def make_fullscreen():
+    """윈도우를 전체 화면 모드로 변경"""
+    app.attributes("-fullscreen", True)
 
 def start_gui():
     """GUI 초기화 및 실행"""
     global app, gui
     app = ctk.CTk()
+
     gui = GUI(app, start_ocr, manual_entry, confirm_registration)
+    app.after(100, make_fullscreen)  # 100ms 후에 전체 화면으로 설정
 
     # DELETE 모니터링 모드는 백그라운드 스레드에서 항상 실행
     delete_monitor_thread = threading.Thread(target=start_delete_monitoring, args=(ser,), daemon=True)
