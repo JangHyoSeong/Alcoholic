@@ -10,6 +10,7 @@ import CustomButton from '@/components/common/CustomButton';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StorageStackParamList } from '@/navigations/stack/StorageStackNavigator';
 import { useNavigation } from '@react-navigation/native';
+import { MyStorageNavigations } from '@/constants';
 
 const AddDrinkScreen: React.FC = () => {
   const navigation = useNavigation()

@@ -12,6 +12,22 @@ import { Ingredient, Cocktail } from '@/api/cocktail';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';
 
+const categories = [
+  { id: 1, name: '증류주' },
+  { id: 2, name: '맥주' },
+  { id: 3, name: '와인' },
+  { id: 4, name: '브랜디' },
+  { id: 5, name: '위스키' },
+  { id: 6, name: '진' },
+  { id: 7, name: '럼' },
+  { id: 8, name: '테킬라' },
+  { id: 9, name: '리큐르' },
+  { id: 10, name: '막걸리' },
+  { id: 11, name: '보드카' },
+  { id: 12, name: '소주' },
+  { id: 13, name: '기타' },
+];
+
 const CustomCocktailScreen: React.FC = () => {
   const [ enCocktailName, setEnCocktailName ] = useState('')
   const [ krCocktailName, setKrCocktailName ] = useState('')
@@ -114,11 +130,15 @@ const CustomCocktailScreen: React.FC = () => {
               }}
               style={tw`border border-gray-300 rounded mb-2`}
             >
-              {[...Array(13)].map((_, i) => (
-                <Picker.Item key={i + 1} label={`카테고리 ${i + 1}`} value={i + 1} />
-              ))}
-            </Picker>
-          )}
+              {categories.map((category) => (
+                    <Picker.Item
+                      key={category.id}
+                      label={category.name}  // 사용자에게 표시될 이름
+                      value={category.id}   // 선택 시 저장할 값
+                    />
+                  ))}
+                </Picker>
+              )}
 
           {/* 재료 이름 입력 */}
           <TextInput

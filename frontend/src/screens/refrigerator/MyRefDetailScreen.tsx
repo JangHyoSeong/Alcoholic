@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import tw from 'twrnc';
 import { TouchableOpacity, View, Image, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StorageStackParamList } from '@/navigations/stack/StorageStackNavigator';
 import { MyStorageNavigations } from '@/constants';
@@ -10,6 +10,7 @@ import CustomFont from '@/components/common/CustomFont';
 import { getDrinkRef, getDrinkDetailRef } from '@/api/refrigerator';
 import { useAppStore } from '@/state/useAppStore';
 import axiosInstance from '@/api/axios';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface DrinkItem {
   id: number;
@@ -68,18 +69,20 @@ const MyRefDetailScreen: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchDrinks = async (refrigeratorId: number) => {
-      try {
-        const data = await getDrinkRef(token, refrigeratorId)
-        setDrinks(data)
-      } catch (error) {
-        console.error('술장고 상세에서 에러', error)
-      }
-    }
-
-    fetchDrinks(refrigeratorId)
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      const fetchDrinks = async (refrigeratorId: number) => {
+        try {
+          const data = await getDrinkRef(token, refrigeratorId);
+          setDrinks(data);
+        } catch (error) {
+          console.error('술장고 상세에서 에러', error);
+        }
+      };
+  
+      fetchDrinks(refrigeratorId);
+    }, [refrigeratorId])
+  );
 
   const renderPosition = (position: number) => {
     const drinkAtPosition = drinks.find((drink) => drink.position === position);
@@ -117,7 +120,10 @@ const MyRefDetailScreen: React.FC = () => {
   };
 
   return (
-    <View style={tw`flex-1 bg-white justify-evenly`}>
+    <View style={tw`flex-1 bg-white`}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Ionicons style={tw`p-2`} name="arrow-back-outline" size={30} />
+      </TouchableOpacity>
       <View style={tw`flex-wrap flex-row mt-10 w-full justify-around p-4`}>
         {[1, 2, 3, 4].map((position) => (
           <View key={position} style={tw`w-[80px]`}>
