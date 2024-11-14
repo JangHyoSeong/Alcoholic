@@ -4,6 +4,7 @@ import com.e206.alcoholic.domain.user.dto.request.NicknameRequestDto;
 import com.e206.alcoholic.domain.user.dto.response.UserResponseDto;
 import com.e206.alcoholic.domain.user.service.UserService;
 import com.e206.alcoholic.global.common.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public class UserController {
 
     // 유저 닉네임 수정
     @PatchMapping("/user")
-    public ResponseEntity<CommonResponse> updateNickname(@RequestBody NicknameRequestDto requestDto) {
+    public ResponseEntity<CommonResponse> updateNickname(@Valid @RequestBody NicknameRequestDto requestDto) {
         return ResponseEntity.ok(userService.updateNickname(requestDto));
     }
 }
