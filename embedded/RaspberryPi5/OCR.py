@@ -10,9 +10,6 @@ import search
 import productList
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
-import yolo_detect
-import mobilenet_classify
-import cv2
 
 # env
 load_dotenv()
@@ -27,7 +24,7 @@ def capture_image(filename="captured_image.jpg"):
     if ret:
         cv2.imwrite(filename, frame)
         print(f"image capture: {filename}")
-        show_image(filename)
+        # show_image(filename)
     else:
         print("image capture fail")
     cap.release()
@@ -74,10 +71,24 @@ def call_ocr_api(image_path):
 
     if response.status_code == 200:
         result = response.json()
-        return extract_text_from_result(result)
+        # return extract_text_from_result(result)
+        return extract_large_text(result, min_height=20)
     else:
         print("OCR fail:", response.status_code, response.text)
         return None
+
+
+def extract_large_text(ocr_result, min_height=20):
+    large_texts = []
+    for field in ocr_result['images'][0]['fields']:
+        vertices = field['boundingPoly']['vertices']
+        height = abs(vertices[0]['y'] - vertices[2]['y'])  # 텍스트 높이 계산
+
+        # 높이가 기준치 이상인 경우에만 텍스트 추가
+        if height >= min_height:
+            large_texts.append(field['inferText'])
+
+    return " ".join(large_texts)
 
 
 def extract_text_from_result(result):
@@ -86,7 +97,6 @@ def extract_text_from_result(result):
         for infer_result in field.get("fields", []):
             texts.append(infer_result.get("inferText"))
     return " ".join(texts)
-
 
 def run_ocr():
     image_path = "captured_image.jpg"
