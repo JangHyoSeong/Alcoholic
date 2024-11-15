@@ -39,4 +39,20 @@ function validateInputUser(values: ResponseUserProfile) {
   return errors
 }
 
-export { validateInputUser }
+function validateUsername(values: string) {
+  const errors = {
+    userName : '',
+  }
+
+  if (isBlank(values)) {
+    errors.userName = '유저 이름은 필수입니다!'
+  } else if (values.length > 20) {
+    errors.userName = '유저 이름은 20자를 넘길 수 없습니다!'
+  } else if (values.length < 8) {
+    errors.userName = '유저 이름은 8자를 넘겨야 합니다!'
+  }
+
+  return errors.userName
+}
+
+export { validateInputUser, validateUsername }
