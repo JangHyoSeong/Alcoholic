@@ -1,5 +1,5 @@
 import tw from 'twrnc';
-import {View, Text, SafeAreaView, Image, TextInput, ScrollView} from 'react-native';
+import {View, Text, Image, TextInput, ScrollView, KeyboardAvoidingView, Alert} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '@/navigations/stack/AuthStackNavigator';
 import {AuthNavigations} from '@/constants';
@@ -7,9 +7,10 @@ import CustomButton from '@/components/common/CustomButton';
 import CustomFont from '@/components/common/CustomFont';
 import main_logo from '@/assets/main_logo.png';
 import {useState} from 'react';
-import {validateInputUser} from '@/utils';
+import {validateInputUser, validateUsername} from '@/utils';
 import {ResponseUserProfile} from '@/types/domain';
 import {registerUser} from '@/api/auth';
+import axiosInstance from '@/api/axios';
 
 type AuthHomeProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -21,12 +22,43 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
+  const [usernameValid, setUsernameValid] = useState<boolean>(false);
 
   const [errors, setErrors] = useState({
     userName: '',
     password: '',
     nickName: '',
   });
+
+  const handleUsernameChechPressed = async () => {
+    const validationError = validateUsername(username);
+    setErrors((prev) => ({
+      ...prev,
+      userName: validationError || '',
+    }));
+
+    if (validationError) {
+      return;
+    }
+    const response = await checkUsernameDuplicated(username);
+    if (response === 'True') {
+      Alert.alert("사용 불가능한 아이디입니다")
+      setUsernameValid(false);
+    } else {
+      Alert.alert("사용 가능한 아이디입니다.")
+      setUsernameValid(true)
+    }
+  }
+
+  const checkUsernameDuplicated = async (username: string) => {
+    try {
+      const response = await axiosInstance.get(`/auth/check?username=${username}`)
+      console.log(response.data.isDuplicated)
+      return response.data.isDuplicated
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const handleSignup = async () => {
     const values: ResponseUserProfile = {
@@ -52,21 +84,27 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
       !validationErrors.nickName
     ) {
       try {
-        const response = await registerUser({username, password, nickname});
-        if (response) {
-          // 회원가입 성공 여부를 확인합니다.
+        const response = await registerUser({ username, password, nickname });
+      
+        if (response.success) {
           console.log('회원가입이 완료되었습니다!');
           navigation.navigate('AuthHome');
         } else {
-          console.error(response); // 실패 메시지 로깅
+          console.error('회원가입 실패:', response.error);
+          Alert.alert('회원가입 실패', '문제가 발생했습니다. 다시 시도해주세요.');
         }
       } catch (error) {
-        console.error('회원가입 중 오류 발생:', error);
+        console.error('예상치 못한 오류 발생:', error);
+        Alert.alert('오류', '회원가입 중 문제가 발생했습니다. 네트워크 상태를 확인해주세요.');
       }
     }
   };
   return (
-    <SafeAreaView>
+    <KeyboardAvoidingView
+      style={tw`flex`}
+      behavior={'height'}
+      keyboardVerticalOffset={30}
+    >
       <ScrollView>
         <View style={tw`items-center h-full mt-10`}>
           <Image
@@ -86,7 +124,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
                 placeholder="아이디"
                 onChangeText={setUsername}
               />
-              <CustomButton label="중복 확인" size="small" />
+              <CustomButton label="중복 확인" size="small" onPress={handleUsernameChechPressed}/>
             </View>
             {errors.userName ? (
               <Text style={tw`text-red-500 mb-2`}>{errors.userName}</Text>
@@ -123,11 +161,12 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
               size="small"
               onPress={handleSignup}
               style={tw`mx-4`}
+              inValid={!usernameValid}
             />
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

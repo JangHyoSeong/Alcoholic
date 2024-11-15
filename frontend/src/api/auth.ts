@@ -1,6 +1,5 @@
 import axiosInstance from './axios';
 import { Alert } from 'react-native';
-import { jwtDecode } from 'jwt-decode';
 
 import { getEncryptStorage } from '@/utils';
 import { storageKeys } from '@/constants';
@@ -12,18 +11,18 @@ export interface User {
   nickname: string;
 }
 
-const registerUser = async (user:User): Promise<User | string> => {
+const registerUser = async (user: User): Promise<{ success: boolean; data?: User; error?: string }> => {
   try {
-    const response = await axiosInstance.post<User>(`/auth/regist`, {
+    const response = await axiosInstance.post<User>('/auth/regist', {
       username: user.username,
       password: user.password,
       nickname: user.nickname,
-    })
-    return response.data
+    });
+    return { success: true, data: response.data };
   } catch (error: any) {
-    return error.message
+    return { success: false, error: error.message };
   }
-}
+};
 
 const loginUser = async (username: string, password: string) => {
   try {
