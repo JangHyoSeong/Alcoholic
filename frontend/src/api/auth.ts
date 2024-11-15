@@ -1,4 +1,5 @@
 import axiosInstance from './axios';
+import { Alert } from 'react-native';
 import { jwtDecode } from 'jwt-decode';
 
 import { getEncryptStorage } from '@/utils';
@@ -35,6 +36,7 @@ const loginUser = async (username: string, password: string) => {
     console.log('토큰입니당', token)
     return token
   } catch (error: any) {
+    Alert.alert('아이디나 비밀번호가 틀렸습니다.')
     console.error('로그인 에러', error.message)
   }
 }

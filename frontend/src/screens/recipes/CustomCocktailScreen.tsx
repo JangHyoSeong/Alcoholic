@@ -72,6 +72,7 @@ const CustomCocktailScreen: React.FC = () => {
 
     try {
       await addCocktail(token, cocktail)
+      Alert.alert('커스텀 칵테일 등록 성공!')
       navigation.goBack()
     } catch (error) {
       console.error('커스텀 칵테일 등록 실패')
@@ -79,8 +80,15 @@ const CustomCocktailScreen: React.FC = () => {
 
   }
 
+  // 재료 필드 추가
   const addIngredientField = () => {
     setIngredients([...ingredients, { categoryId: categoryId, ingredient: '', measure: '' }]);
+  };
+
+  // 재료 필드 삭제
+  const removeIngredientField = (index: number) => {
+    const newIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(newIngredients);
   };
 
   return (
@@ -95,7 +103,7 @@ const CustomCocktailScreen: React.FC = () => {
       />
       <TextInput
         style={tw`border border-gray-300 rounded p-3 mb-3`}
-        placeholder="한국어 칵테일 이름"
+        placeholder="한국어 칵테일 이름 (자음 단일, 모음 단일 입력 시 등록 불가)"
         value={krCocktailName}
         onChangeText={setKrCocktailName}
       />
@@ -163,6 +171,9 @@ const CustomCocktailScreen: React.FC = () => {
               setIngredients(newIngredients);
             }}
           />
+          <TouchableOpacity onPress={() => removeIngredientField(index)}>
+            <CustomFont style={tw`text-[red] text-right`}>재료 삭제</CustomFont>
+          </TouchableOpacity>
         </View>
       ))}
       <CustomButton label="재료 추가" size='small' onPress={addIngredientField} />
