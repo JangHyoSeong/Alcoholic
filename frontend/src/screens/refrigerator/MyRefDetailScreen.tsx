@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import tw from 'twrnc';
-import { TouchableOpacity, View, Image, Modal } from 'react-native';
+import { TouchableOpacity, View, Image, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,6 +11,7 @@ import { getDrinkRef, getDrinkDetailRef } from '@/api/refrigerator';
 import { useAppStore } from '@/state/useAppStore';
 import axiosInstance from '@/api/axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface DrinkItem {
   id: number;
@@ -91,10 +92,10 @@ const MyRefDetailScreen: React.FC = () => {
         {drinkAtPosition ? (
           <>
             <TouchableOpacity onPress={() => handleOpenModal(drinkAtPosition.id)}>
-              <View style={tw`p-4 border rounded-lg`}>
+              <View style={tw`w-20 h-20 rounded-lg`}>
                 <Image
                   source={{ uri: drinkAtPosition.imageUrl }}
-                  style={tw`w-11 h-11 rounded-lg object-cover`}
+                  style={tw`w-20 h-20 rounded-lg`}
                   resizeMode='cover'
                 />
               </View>
@@ -124,16 +125,26 @@ const MyRefDetailScreen: React.FC = () => {
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <Ionicons style={tw`p-2`} name="arrow-back-outline" size={30} />
       </TouchableOpacity>
-      <View style={tw`flex-wrap flex-row mt-10 w-full justify-around p-4`}>
-        {[1, 2, 3, 4].map((position) => (
-          <View key={position} style={tw`w-[80px]`}>
-            {renderPosition(position)}
+      <CustomFont style={tw`text-center text-[30px]`}>술장고 상세</CustomFont>
+      <View style={tw`mt-10 border-2 border-gray-200  ml-2 w-400px h-600px`}>
+        <LinearGradient
+            colors={['#a0c4ff', '#a3bffa', '#f0f4f8']}
+            style={tw`flex-1`}
+            start={{ x: 1, y: 1 }}
+            end = {{x: 0, y: 0 }}
+          >
+          <View style={tw`flex-wrap flex-row mt-110 w-full justify-around p-4`}>
+            {[1, 2, 3, 4].map((position) => (
+              <View key={position} style={tw`w-[90px]`}>
+                {renderPosition(position)}
+              </View>
+            ))}
           </View>
-        ))}
+        </LinearGradient>
       </View>
       <View style={tw`flex-row p-2`}>
-      <TouchableOpacity onPress={() => handleMoveAddDrink(refrigeratorId)}>
-        <CustomFont style={tw`text-[20px] text-blue-300 text-center`}>술 등록 하기</CustomFont>
+      <TouchableOpacity style={tw`w-full`} onPress={() => handleMoveAddDrink(refrigeratorId)}>
+        <CustomFont style={tw`text-[20px] text-right text-blue-300`}>술 등록 하기</CustomFont>
       </TouchableOpacity>
       </View>
       <Modal
@@ -144,7 +155,7 @@ const MyRefDetailScreen: React.FC = () => {
       >
         <View style={tw`flex-1 justify-center items-center bg-black opacity-80`}>
           <View style={tw`bg-white p-6 rounded-lg w-[80%]`}>
-            {selectedDrink && (
+            {selectedDrink ? (
               <>
                 <CustomFont style={tw`text-xl font-bold text-center`}>{selectedDrink.koreanName}</CustomFont>
                 <CustomFont>도수: {selectedDrink.degree}%</CustomFont>
@@ -155,6 +166,13 @@ const MyRefDetailScreen: React.FC = () => {
                   <CustomFont style={tw`text-red-500 text-center mt-4`}>닫기</CustomFont>
                 </TouchableOpacity>
               </>
+            ) : (
+              <View>
+                <CustomFont style={tw`text-xl font-bold text-center`}>DB에 없는 술입니다.</CustomFont>
+                <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                    <CustomFont style={tw`text-red-500 text-center mt-4`}>닫기</CustomFont>
+                </TouchableOpacity>
+              </View>
             )}
           </View>
         </View>
