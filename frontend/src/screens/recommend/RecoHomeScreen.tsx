@@ -90,7 +90,17 @@ const RecoHomeScreen: React.FC = () => {
         />
     </View>
     <View style={tw`pt-5`}>
-        <CustomFont style={tw`text-[25px] text-center pb-5`}>추천 칵테일!</CustomFont>
+      <CustomFont style={tw`text-[25px] text-center pb-5`}>추천 칵테일!</CustomFont>
+
+      {topCusCocktails.length === 0 ? (
+        // topCusCocktails 배열이 비어 있을 때 보여줄 메시지
+        <View style={tw`justify-center items-center py-10`}>
+          <CustomFont style={tw`mt-10 text-[25px] text-red-400`}>
+            추천을 받으시려면 냉장고를 채워주세요!
+          </CustomFont>
+        </View>
+      ) : (
+        // topCusCocktails 배열에 데이터가 있을 때 FlatList 렌더링
         <FlatList
           data={topCusCocktails}
           renderItem={renderCusItem}
@@ -99,6 +109,7 @@ const RecoHomeScreen: React.FC = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={tw`pl-4`}
         />
+      )}
     </View>
    </SafeAreaView>
  )
