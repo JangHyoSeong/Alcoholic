@@ -9,7 +9,11 @@ import os
 import search
 import productList
 import sys
+import yolo_detect
+from langdetect import detect, DetectorFactory
 sys.stdout.reconfigure(encoding='utf-8')
+
+DetectorFactory.seed = 0
 
 # env
 load_dotenv()
@@ -18,8 +22,13 @@ secret_key = os.getenv("SECRET_KEY")
 api_url = os.getenv("OCR_API_URL")
 
 
-def capture_image(filename="captured_image.jpg"):
-    cap = cv2.VideoCapture(0)
+def capture_image(cap, filename="captured_image.jpg"):
+    # cap = cv2.VideoCapture(0)
+
+    # 잠깐 텀 두기
+    for _ in range(5):
+        cap.read()
+        
     ret, frame = cap.read()
     if ret:
         cv2.imwrite(filename, frame)
@@ -27,7 +36,8 @@ def capture_image(filename="captured_image.jpg"):
         # show_image(filename)
     else:
         print("image capture fail")
-    cap.release()
+    # cap.release()
+
 
 def show_image(filename):
     image = cv2.imread(filename)
@@ -72,13 +82,14 @@ def call_ocr_api(image_path):
     if response.status_code == 200:
         result = response.json()
         # return extract_text_from_result(result)
-        return extract_large_text(result, min_height=20)
+        # return extract_large_text(result, 20)
+        return filter_large_texts(result, 0.4)
     else:
         print("OCR fail:", response.status_code, response.text)
         return None
 
 
-def extract_large_text(ocr_result, min_height=20):
+def extract_large_text(ocr_result, min_height=15):
     large_texts = []
     for field in ocr_result['images'][0]['fields']:
         vertices = field['boundingPoly']['vertices']
@@ -91,6 +102,28 @@ def extract_large_text(ocr_result, min_height=20):
     return " ".join(large_texts)
 
 
+def filter_large_texts(ocr_data, threshold_ratio=0.7):
+    fields = ocr_data['images'][0]['fields']
+
+    if not fields:
+        print("No fields detected in OCR data.")
+        return ""
+
+    heights = [abs(field['boundingPoly']['vertices'][0]['y'] - field['boundingPoly']['vertices'][2]['y']) for field in fields]
+    
+    if not heights:
+        print("No valid bounding boxes detected in fields.")
+        return ""
+
+    max_height = max(heights)
+    threshold_height = max_height * threshold_ratio
+    
+    # Filter texts based on the threshold
+    large_texts = [field['inferText'] for field, height in zip(fields, heights) if height >= threshold_height]
+    
+    return " ".join(large_texts)
+
+
 def extract_text_from_result(result):
     texts = []
     for field in result.get("images", []):
@@ -99,7 +132,7 @@ def extract_text_from_result(result):
     return " ".join(texts)
 
     
-def run_ocr():
+def run_ocr(cap):
     image_path = "captured_image.jpg"
 
     # 파일 존재 여부 확인
@@ -107,10 +140,19 @@ def run_ocr():
         print("Image file does not exist. Exiting OCR process.")
         return None
         
-    capture_image(image_path)
+    capture_image(cap, image_path)
 
     text = call_ocr_api(image_path)
     if text:
+        # try:
+        #     language = detect(text)
+        #     if language not in ['ko', 'en']:  # 한국어('ko')와 영어('en')가 아닌 경우
+        #         print("Detected language is not Korean or English. Exiting OCR process.")
+        #         return None
+        # except Exception as e:
+        #     print("Language detection failed:", e)
+        #     return None
+
         print("OCR result:\n", text)
         product_data = productList.get_products()
 
@@ -118,13 +160,16 @@ def run_ocr():
         # for product in matched_product:
         #     # print(f"best product: {product}, similarity: {similarity_score:.2f}")
         #     print(f"best product: {product}")
+
+        # YOLO 모델로 술 병 탐지
+        yolo_product, yolo_score = yolo_detect.detect_bottle(image_path)
+
+        if yolo_score > 0.85:
+            return yolo_product
         return matched_product
     else:
         print("text make fail")
         
-    # YOLO 모델로 술 병 탐지
-    bottle_coords = yolo_detect.detect_bottle(image_path)
-        
-
+    
 if __name__ == "__main__":
     run_ocr()
