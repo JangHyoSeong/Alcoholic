@@ -5,22 +5,37 @@ from gui import GUI
 from loadcell import start_registration_monitoring, start_delete_monitoring, register_drink
 from OCR import run_ocr
 import serial
+import cv2 
 
 # 전역 시리얼 포트 설정 (단일 인스턴스로 유지)
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 
-def start_ocr():
+def start_ocr(cap):
     """OCR을 실행하고 결과를 GUI에 전달"""
     gui.register_button.pack_forget()
     gui.confirm_button.pack_forget()
     gui.retake_button.pack_forget()
-    gui.manual_button.pack_forget()
+    # gui.manual_button.pack_forget()
 
     gui.status_label.configure(text="라벨 인식 중...")
     app.update_idletasks()  # 필요한 부분만 갱신
     
-    product_name = run_ocr()
-    gui.show_result_screen(product_name)
+    try:
+        product_name = run_ocr(cap)
+        if not product_name:
+            gui.status_label.configure(text="다시 촬영해주세요.")
+            gui.retake_button.configure(text="다시 촬영하기", state="normal")
+            gui.retake_button.pack(pady=10)
+            # gui.show_camera_preview()
+        else:
+            gui.show_result_screen(product_name)
+    except Exception as e:
+        print("Error during OCR process:", e)
+        gui.status_label.configure(text="다시 촬영해주세요")
+        gui.retake_button.configure(text="다시 촬영하기", state="normal")
+        gui.retake_button.pack(pady=10)
+        # gui.show_camera_preview()
+    # gui.show_result_screen(product_name)
 
 def manual_entry():
     """수기 입력 화면으로 전환"""
@@ -59,7 +74,8 @@ def start_gui():
     global app, gui
     app = ctk.CTk()
 
-    gui = GUI(app, start_ocr, manual_entry, confirm_registration)
+    cap = cv2.VideoCapture(0)
+    gui = GUI(app, lambda: start_ocr(cap), manual_entry, confirm_registration, cap)
     app.after(100, make_fullscreen)  # 100ms 후에 전체 화면으로 설정
 
     # DELETE 모니터링 모드는 백그라운드 스레드에서 항상 실행

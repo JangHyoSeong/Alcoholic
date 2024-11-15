@@ -1,6 +1,8 @@
 import re, random
 from fuzzywuzzy import fuzz
+from sklearn.feature_extraction.text import CountVectorizer
 from jamo import h2j, j2hcj
+import numpy as np
 
 
 def preprocess_text(text):
@@ -14,23 +16,41 @@ def text_to_jamo(text):
     return jamo_text
 
 
+def custom_text(text):
+    return text_to_jamo(preprocess_text(text))
+
+
 def calculate_levenshtein_similarity(text1, text2):
-    custom_text1 = text_to_jamo(preprocess_text(text1))
-    custom_text2 = text_to_jamo(preprocess_text(text2))
-    return fuzz.ratio(custom_text1, custom_text2) / 100
+    return fuzz.ratio(text1, text2) / 100
+
+
+def calculate_jaccard_similarity(text1, text2):
+    vectorizer = CountVectorizer(analyzer='char', ngram_range=(2, 3))
+    ngrams1 = vectorizer.fit_transform([text1])
+    ngrams2 = vectorizer.transform([text2])
+    
+    intersection = np.minimum(ngrams1.toarray(), ngrams2.toarray()).sum()
+    union = np.maximum(ngrams1.toarray(), ngrams2.toarray()).sum()
+    return intersection / union
 
 
 def find_most_similar_product(text, product_data):
-    # custom_text = text_to_jamo(preprocess_text(text))
     highest_similarity = 0
-    best_match = "Undefined"
+    best_match = None
 
     for product in product_data:
         en_name = product["enDrinkName"]
         kr_name = product["krDrinkName"]
 
-        en_similarity = calculate_levenshtein_similarity(text, en_name)
-        kr_similarity = calculate_levenshtein_similarity(text, kr_name)
+        customed_text = custom_text(text)
+        customed_en_name = custom_text(en_name)
+        customed_kr_name = custom_text(kr_name)
+
+
+        # en_similarity = calculate_levenshtein_similarity(customed_text, customed_en_name)
+        # kr_similarity = calculate_levenshtein_similarity(customed_text, customed_kr_name)
+        en_similarity = calculate_jaccard_similarity(customed_text, customed_en_name)
+        kr_similarity = calculate_jaccard_similarity(customed_text, customed_kr_name)
 
         if en_similarity > highest_similarity:
             highest_similarity = en_similarity
@@ -39,5 +59,5 @@ def find_most_similar_product(text, product_data):
             highest_similarity = kr_similarity
             best_match = kr_name
             
-    # print(best_match, highest_similarity)
+    print(best_match, highest_similarity)
     return best_match, highest_similarity
