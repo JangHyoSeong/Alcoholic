@@ -83,7 +83,7 @@ def call_ocr_api(image_path):
         result = response.json()
         # return extract_text_from_result(result)
         # return extract_large_text(result, 20)
-        return filter_large_texts(result, 0.4)
+        return filter_large_texts(result, 0.5)
     else:
         print("OCR fail:", response.status_code, response.text)
         return None
@@ -146,9 +146,9 @@ def run_ocr(cap):
     if text:
         # try:
         #     language = detect(text)
-        #     if language not in ['ko', 'en']:  # 한국어('ko')와 영어('en')가 아닌 경우
-        #         print("Detected language is not Korean or English. Exiting OCR process.")
-        #         return None
+            # if language not in ['ko', 'en']:  # 한국어('ko')와 영어('en')가 아닌 경우
+            #     print("Detected language is not Korean or English. Exiting OCR process.")
+            #     return None
         # except Exception as e:
         #     print("Language detection failed:", e)
         #     return None
@@ -166,9 +166,12 @@ def run_ocr(cap):
 
         if yolo_score > 0.85:
             return yolo_product
+        if similarity_score < 0.2: # 너무 낮으면 다시 촬영하게...
+            return None
         return matched_product
     else:
         print("text make fail")
+        return None
         
     
 if __name__ == "__main__":

@@ -26,21 +26,13 @@ def start_ocr(cap):
     try:
         product_name = run_ocr(cap)
         if not product_name:
-            gui.home_button.pack()
-            gui.captured_image_label.grid_forget()  # "등록하기" 버튼 숨김
-            gui.status_label.configure(text="다시 촬영해주세요.")
-            gui.retake_button.configure(text="다시 촬영하기", state="normal")
-            gui.retake_button.pack(pady=10)
+            gui.retake_capture()
             # gui.show_camera_preview()
         else:
             gui.show_result_screen(product_name)
     except Exception as e:
         print("Error during OCR process:", e)
-        gui.home_button.pack()
-        gui.captured_image_label.grid_forget()  # "등록하기" 버튼 숨김
-        gui.status_label.configure(text="다시 촬영해주세요")
-        gui.retake_button.configure(text="다시 촬영하기", state="normal")
-        gui.retake_button.pack(pady=10)
+        gui.retake_capture()
         # gui.show_camera_preview()
     # gui.show_result_screen(product_name)
 

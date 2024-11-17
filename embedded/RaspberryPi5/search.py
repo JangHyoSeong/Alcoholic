@@ -7,7 +7,7 @@ import numpy as np
 
 def preprocess_text(text):
     text = re.sub(r'[^a-zA-Z0-9가-힣\s]', '', text)
-    return text.lower().strip()
+    return text.lower().replace(" ", "")
 
 
 def text_to_jamo(text):
@@ -25,8 +25,9 @@ def calculate_levenshtein_similarity(text1, text2):
 
 
 def calculate_jaccard_similarity(text1, text2):
-    vectorizer = CountVectorizer(analyzer='char', ngram_range=(2, 3))
-    ngrams1 = vectorizer.fit_transform([text1])
+    vectorizer = CountVectorizer(analyzer='char', ngram_range=(1, 3))
+    vectorizer.fit([text1, text2])  # 공통된 특징 공간 생성
+    ngrams1 = vectorizer.transform([text1])
     ngrams2 = vectorizer.transform([text2])
     
     intersection = np.minimum(ngrams1.toarray(), ngrams2.toarray()).sum()
@@ -37,20 +38,19 @@ def calculate_jaccard_similarity(text1, text2):
 def find_most_similar_product(text, product_data):
     highest_similarity = 0
     best_match = None
+    customed_text = custom_text(text)
 
     for product in product_data:
         en_name = product["enDrinkName"]
         kr_name = product["krDrinkName"]
 
-        customed_text = custom_text(text)
         customed_en_name = custom_text(en_name)
-        customed_kr_name = custom_text(kr_name)
-
+        customed_kr_name = custom_text(kr_name) 
 
         # en_similarity = calculate_levenshtein_similarity(customed_text, customed_en_name)
         # kr_similarity = calculate_levenshtein_similarity(customed_text, customed_kr_name)
-        en_similarity = calculate_jaccard_similarity(customed_text, customed_en_name)
-        kr_similarity = calculate_jaccard_similarity(customed_text, customed_kr_name)
+        en_similarity = calculate_jaccard_similarity(text, en_name)
+        kr_similarity = calculate_jaccard_similarity(text, kr_name)
 
         if en_similarity > highest_similarity:
             highest_similarity = en_similarity
