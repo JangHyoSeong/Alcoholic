@@ -38,7 +38,7 @@ class GUI:
         self.home_button.pack()
 
         # 상태 표시 라벨
-        self.status_label = ctk.CTkLabel(root, text="주류 냉장고에 제품을 등록하세요", font=("Arial", 15))
+        self.status_label = ctk.CTkLabel(root, text="카메라에 제품 라벨이 보이도록 위치시킨 후, [등록하기] 버튼을 눌러주세요.", font=("Arial", 15))
         self.status_label.pack(pady=20)
 
         # 실시간 카메라 및 결과를 담을 프레임
@@ -142,6 +142,13 @@ class GUI:
         self.retake_button.pack_forget()
         self.manual_button.pack_forget()
 
+    def retake_capture(self):
+        self.home_button.pack()
+        self.captured_image_label.grid_forget()  # "등록하기" 버튼 숨김
+        self.status_label.configure(text="다시 촬영해주세요.")
+        self.retake_button.configure(text="다시 촬영하기", state="normal")
+        self.retake_button.pack(pady=10)
+
     def confirm_registration(self):
         messagebox.showinfo("등록", "제품이 등록되었습니다.")
 
@@ -176,7 +183,7 @@ class GUI:
 
 
     def reset_to_initial_state(self):
-        self.status_label.configure(text="주류 냉장고에 제품을 등록하세요")
+        self.status_label.configure(text="카메라에 제품 라벨이 보이도록 위치시킨 후, [등록하기] 버튼을 눌러주세요.")
         self.camera_preview_label.grid(row=0, column=0, padx=10, pady=10)
         self.captured_image_label.grid_forget()
 
