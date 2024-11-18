@@ -83,7 +83,7 @@ public class DrinkStockService {
         // krDrinkName 또는 enDrinkName으로 검색
         Drink drink = drinkRepository
                 .findDrinkByKrDrinkNameOrEnDrinkName(requestDto.getDrinkName())
-                .orElseThrow(() -> new CustomException(ErrorCode.DRINK_NOT_FOUND));
+                .orElse(null); 
 
         Integer position = requestDto.getPosition();
 
@@ -102,7 +102,11 @@ public class DrinkStockService {
         CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
         List<Refrigerator> refrigerators = refrigeratorRepository.findByUserId(customUserDetails.getUserId());
         DrinkStock drinkStock = drinkStockRepository.findById(drinkStockId).orElseThrow(() -> new CustomException(ErrorCode.STOCK_NOT_FOUND));
+
         Drink drink = drinkStock.getDrink();
+        if (drink == null) {
+            throw new CustomException(ErrorCode.DRINK_NOT_FOUND);
+        }
 
         if (!refrigerators.contains(drinkStock.getRefrigerator())) {
             throw new CustomException(ErrorCode.STOCK_NOT_IN_USER_REFRIGERATORS);
@@ -114,7 +118,7 @@ public class DrinkStockService {
                 .degree(drink.getAlcoholDegree())
                 .stockTime(drinkStock.getStockTime())
                 .position(drinkStock.getPosition())
-                .type("임시")
+                .type(drinkStock.getDrink().getCategory().getCategoryName())
                 .build();
     }
 
