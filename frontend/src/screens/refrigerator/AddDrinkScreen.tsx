@@ -34,6 +34,8 @@ const AddDrinkScreen: React.FC = () => {
   };
 
   const handleAddDrink = async () => {
+    if (isSubmitting) return
+
     if (!drinkName || !position) {
       Alert.alert('입력 오류', '모든 필드를 입력해 주십시오!');
       return;
@@ -59,8 +61,13 @@ const AddDrinkScreen: React.FC = () => {
       setDrinkName('');
       setPosition(1);
       setImageUri(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('등록 실패', error);
+      if (error.response?.status == 400) {
+        Alert.alert('이미 위치에 술이 있습니다.')
+      } else {
+        Alert.alert('알 수 없는 오류 발생')
+      }
     } finally {
       setIsSubmitting(false);
       navigation.goBack()

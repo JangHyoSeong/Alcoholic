@@ -11,6 +11,7 @@ import {validateInputUser, validateUsername} from '@/utils';
 import {ResponseUserProfile} from '@/types/domain';
 import {registerUser} from '@/api/auth';
 import axiosInstance from '@/api/axios';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 type AuthHomeProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -22,6 +23,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
+  const [ loading, setLoading ] = useState(false)
   const [usernameValid, setUsernameValid] = useState<boolean>(false);
 
   const [errors, setErrors] = useState({
@@ -51,16 +53,24 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
   }
 
   const checkUsernameDuplicated = async (username: string) => {
+    if (loading) return
+    setLoading(true)
+
     try {
       const response = await axiosInstance.get(`/auth/check?username=${username}`)
       console.log(response.data.isDuplicated)
       return response.data.isDuplicated
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false)
     }
   }
 
   const handleSignup = async () => {
+    if (loading) return
+    setLoading(true)
+
     const values: ResponseUserProfile = {
       username,
       password,
@@ -96,6 +106,8 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
       } catch (error) {
         console.error('예상치 못한 오류 발생:', error);
         Alert.alert('오류', '회원가입 중 문제가 발생했습니다. 네트워크 상태를 확인해주세요.');
+      } finally {
+        setLoading(false)
       }
     }
   };

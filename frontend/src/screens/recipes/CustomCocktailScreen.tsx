@@ -37,6 +37,7 @@ const CustomCocktailScreen: React.FC = () => {
     // { categoryId: 0, ingredient: '', measure: '' }
   ])
   const [ categoryId, setCategoryId ] = useState(1)
+  const [ loading, setLoading ] = useState(false)
   const token = useAppStore((state) => state.token)
   const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>()
 
@@ -51,6 +52,9 @@ const CustomCocktailScreen: React.FC = () => {
   }
 
   const handleSubmit = async () => {
+    if (loading) return
+    setLoading(true)
+
     if (!enCocktailName || !krCocktailName || !instruction) {
       Alert.alert('모든 필드를 채워주세요!')
       return
@@ -76,6 +80,8 @@ const CustomCocktailScreen: React.FC = () => {
       navigation.goBack()
     } catch (error) {
       console.error('커스텀 칵테일 등록 실패')
+    } finally {
+      setLoading(false)
     }
 
   }
@@ -181,7 +187,7 @@ const CustomCocktailScreen: React.FC = () => {
         </View>
       ))}
       <CustomButton label="재료 추가" size='small' onPress={addIngredientField} />
-      <View style={tw`mt-3`}>
+      <View style={tw`mt-3 mb-8`}>
         <CustomButton label="칵테일 등록" size='small' onPress={handleSubmit} />
       </View>
     </ScrollView>
