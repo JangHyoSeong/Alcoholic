@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import tw from 'twrnc';
 import { SafeAreaView, TouchableOpacity, View, FlatList, Image } from 'react-native';
 import HomeBanner from '@/components/home/HomeBanner';
 import CustomFont from '@/components/common/CustomFont';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { RecommendNavigations } from '@/constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RecoStackParamList } from '@/navigations/stack/RecoStackNavigator';
@@ -35,15 +35,28 @@ const RecoHomeScreen: React.FC = () => {
   const [ topPopCocktails, setTopPopCocktails ] = useState<PopularCocktailData[]>([])
   const [ topCusCocktails, setTopCusCocktails ] = useState<CustomCocktailData[]>([])
 
-  useEffect(() => {
+  
+useFocusEffect(
+  useCallback(() => {
     const fetchData = async () => {
-      const popData = await getPopularCock(token)
-      const cusData = await getCustomCock(token)
-      setTopPopCocktails(popData.slice(0, 5))
-      setTopCusCocktails(cusData.slice(0, 5))
-    }
-    fetchData()
-  }, [])
+      try {
+        const popData = await getPopularCock(token);
+        const cusData = await getCustomCock(token);
+        setTopPopCocktails(popData.slice(0, 5));
+        setTopCusCocktails(cusData.slice(0, 5));
+      } catch (error) {
+        console.error('데이터 로드 실패', error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      setTopPopCocktails([]);
+      setTopCusCocktails([]);
+    };
+  }, [token])
+);
 
   // 모든 술 정보 목록 페이지로 이동
   const handleDrinkList = () => {

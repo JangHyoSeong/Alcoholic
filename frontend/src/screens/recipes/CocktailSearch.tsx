@@ -91,7 +91,7 @@ const CocktailSearch: React.FC = () => {
           />
           <Ionicons style={tw`absolute top-3 left-94 text-[22px]`} name='search' onPress={fetchSearchResults}/>
         </View>
-        <TouchableOpacity style={tw`absolute top-12 left-70 pb-1`} onPress={handleAddCocktail}>
+        <TouchableOpacity style={tw`absolute top-12 left-65 pb-1`} onPress={handleAddCocktail}>
           <CustomFont style={tw`text-blue-300`}>칵테일을 추가하세요!</CustomFont>
         </TouchableOpacity>
         <View style={tw`pt-2`}>
