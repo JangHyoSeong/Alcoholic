@@ -2,7 +2,7 @@ import React from 'react';
 import tw from 'twrnc';
 import { SafeAreaView, View, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import CustomFont from '../common/CustomFont';
-import please from '@/assets/pleaseregi.png';
+import please from '@/assets/default_image.png';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { colors } from '@/constants';
 import { RecipeStackParamList } from '@/navigations/stack/RecipeStackNavigator';

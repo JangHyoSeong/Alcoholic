@@ -3,7 +3,7 @@ import tw from 'twrnc';
 import { SafeAreaView, View, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import CustomFont from '../common/CustomFont';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import please from '@/assets/pleaseregi.png'
+import please from '@/assets/default_image.png'
 import { colors } from '@/constants';
 import { useNavigation } from '@react-navigation/native';
 import { RecipeNavigations } from '@/constants';

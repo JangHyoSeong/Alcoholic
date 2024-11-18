@@ -110,7 +110,7 @@ const CustomCocktailScreen: React.FC = () => {
       />
       <TextInput
         style={tw`border border-gray-300 rounded p-3 mb-3`}
-        placeholder="한국어 칵테일 이름 (자음 단일, 모음 단일 입력 시 등록 불가)"
+        placeholder="한국어 칵테일 이름"
         value={krCocktailName}
         onChangeText={setKrCocktailName}
         maxLength={50}

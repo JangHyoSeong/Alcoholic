@@ -11,7 +11,6 @@ import {validateInputUser, validateUsername} from '@/utils';
 import {ResponseUserProfile} from '@/types/domain';
 import {registerUser} from '@/api/auth';
 import axiosInstance from '@/api/axios';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 type AuthHomeProps = NativeStackScreenProps<
   AuthStackParamList,
