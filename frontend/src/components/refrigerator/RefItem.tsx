@@ -71,6 +71,7 @@ const RefItem: React.FC<RefItemProps> = ({ item, onDelete }) => {
             <TextInput
               style={tw`border border-white p-2 rounded ml-1 mr-2 flex-1 text-white`}
               value={newname}
+              maxLength={20}
               onChangeText={setNewname}
               onBlur={handleRefnamePut} // 포커스가 벗어날 때 변경 요청
             />

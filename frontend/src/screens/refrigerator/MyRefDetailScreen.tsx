@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import tw from 'twrnc';
-import { TouchableOpacity, View, Image, Modal, Alert } from 'react-native';
+import { TouchableOpacity, View, Image, Modal, RefreshControl, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -37,6 +37,8 @@ type MyStorageDetailScreenRouteProp = RouteProp<StorageStackParamList, 'MyStorag
 const MyRefDetailScreen: React.FC = () => {
   const { params } = useRoute<MyStorageDetailScreenRouteProp>()
   const { refrigeratorId } = params
+  const [ refetch, setRefetch ] = useState(false)
+  const [ refreshing, setRefreshing ] = useState(false)
   const [ drinks, setDrinks ] = useState<DrinkItem[]>([])
   const [ selectedDrink, setSelectedDrink ] = useState<DrinkItemDetail>()
   const [ isModalVisible, setIsModalVisible ] = useState(false)
@@ -54,7 +56,9 @@ const MyRefDetailScreen: React.FC = () => {
           Authorization: token
         }
       })
+      Alert.alert('삭제되었습니다')
       console.log('삭제 성공')
+      setRefetch((prev) => !prev)
     } catch (error) {
       console.error('삭제 실패')
     }
@@ -70,20 +74,26 @@ const MyRefDetailScreen: React.FC = () => {
     }
   }
 
+  const fetchDrinks = async () => {
+    try {
+      const data = await getDrinkRef(token, refrigeratorId)
+      setDrinks(data)
+    } catch (error) {
+      console.error('술장고 상세에서 에러')
+    }
+  }
+
   useFocusEffect(
     useCallback(() => {
-      const fetchDrinks = async (refrigeratorId: number) => {
-        try {
-          const data = await getDrinkRef(token, refrigeratorId);
-          setDrinks(data);
-        } catch (error) {
-          console.error('술장고 상세에서 에러', error);
-        }
-      };
-  
-      fetchDrinks(refrigeratorId);
-    }, [refrigeratorId])
+      fetchDrinks();
+    }, [refrigeratorId, refetch])
   );
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    await fetchDrinks();
+    setRefreshing(false)
+  };
 
   const renderPosition = (position: number) => {
     const drinkAtPosition = drinks.find((drink) => drink.position === position);
@@ -121,7 +131,9 @@ const MyRefDetailScreen: React.FC = () => {
   };
 
   return (
-    <View style={tw`flex-1 bg-white`}>
+    <ScrollView style={tw`flex-1 bg-white`}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <Ionicons style={tw`p-2`} name="arrow-back-outline" size={30} />
       </TouchableOpacity>
@@ -185,7 +197,7 @@ const MyRefDetailScreen: React.FC = () => {
         </View>
       </Modal>
 
-    </View>
+    </ScrollView>
   );
 };
 
