@@ -11,10 +11,10 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CocktailCreateRequestDto {
-    @Pattern(regexp = "^[A-Za-z0-9]{1,50}$", message = "칵테일 영어 이름은 영어, 숫자만 가능합니다.")
+    @Pattern(regexp = "^[A-Za-z0-9\\s]{1,50}$", message = "칵테일 영어 이름은 영어, 숫자만 가능합니다.")
     private String enCocktailName;
 
-    @Pattern(regexp = "^[가-힣0-9]{1,50}$", message = "칵테일 한국 이름은 한국어, 숫자만 가능합니다")
+    @Pattern(regexp = "^[가-힣0-9\\s]{1,50}$", message = "칵테일 한국 이름은 한국어, 숫자만 가능합니다")
     private String krCocktailName;
 
     private String instruction;
