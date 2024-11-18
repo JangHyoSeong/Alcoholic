@@ -80,7 +80,10 @@ public class DrinkStockService {
         CustomUserDetails customUserDetails = AuthUtil.getCustomUserDetails();
         Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId, customUserDetails.getUserId());
 
-        Drink drink = drinkRepository.findDrinkByKrDrinkName(requestDto.getDrinkName()).orElse(null);
+        // krDrinkName 또는 enDrinkName으로 검색
+        Drink drink = drinkRepository
+                .findDrinkByKrDrinkNameOrEnDrinkName(requestDto.getDrinkName())
+                .orElseThrow(() -> new CustomException(ErrorCode.DRINK_NOT_FOUND));
 
         Integer position = requestDto.getPosition();
 
@@ -139,8 +142,9 @@ public class DrinkStockService {
         Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRIGERATOR_NOT_FOUND));
 
-        Drink drink = drinkRepository.findDrinkByKrDrinkName(requestDto.getDrinkName())
-                .orElse(null);
+        Drink drink = drinkRepository
+                .findDrinkByKrDrinkNameOrEnDrinkName(requestDto.getDrinkName())
+                .orElseThrow(() -> new CustomException(ErrorCode.DRINK_NOT_FOUND));
 
         Integer position = requestDto.getPosition();
 
