@@ -76,6 +76,7 @@ const AddDrinkScreen: React.FC = () => {
         placeholder="술 이름"
         value={drinkName}
         onChangeText={setDrinkName}
+        maxLength={50}
       />
 
       <View style={tw`border p-2 mb-4`}>

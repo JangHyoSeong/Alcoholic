@@ -67,12 +67,14 @@ const LoginScreen = ({ navigation }: AuthHomeProps) => {
           style={tw`border border-gray-400 rounded-lg w-3/4 p-3 mb-4`}
           placeholder='아이디'
           onChangeText={setUsername}
+          maxLength={20}
           />
           <TextInput 
           style={tw`border border-gray-400 rounded-lg w-3/4 p-3 mb-6`}
           placeholder='비밀번호'
           secureTextEntry={true}
           onChangeText={setPassword}
+          maxLength={20}
           />
           <View style={tw`flex-row`}>
             <CustomButton

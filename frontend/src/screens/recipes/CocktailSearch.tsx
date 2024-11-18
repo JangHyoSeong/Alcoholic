@@ -87,6 +87,7 @@ const CocktailSearch: React.FC = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             onSubmitEditing={fetchSearchResults}
+            maxLength={50}
           />
           <Ionicons style={tw`absolute top-3 left-94 text-[22px]`} name='search' onPress={fetchSearchResults}/>
         </View>

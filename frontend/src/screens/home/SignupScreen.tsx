@@ -123,6 +123,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
                 }`}
                 placeholder="아이디"
                 onChangeText={setUsername}
+                maxLength={20}
               />
               <CustomButton label="중복 확인" size="small" onPress={handleUsernameChechPressed}/>
             </View>
@@ -135,6 +136,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
               }`}
               placeholder="닉네임"
               onChangeText={setNickname}
+              maxLength={20}
             />
             {errors.nickName ? (
               <Text style={tw`text-red-500 mb-2`}>{errors.nickName}</Text>
@@ -146,6 +148,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
               placeholder="비밀번호"
               secureTextEntry={true}
               onChangeText={setPassword}
+              maxLength={20}
             />
             {errors.password ? (
               <Text style={tw`text-red-500 mb-2`}>{errors.password}</Text>
@@ -155,6 +158,7 @@ const SignupScreen = ({navigation}: AuthHomeProps) => {
               placeholder="비밀번호 확인"
               secureTextEntry={true}
               onChangeText={setPasswordCheck}
+              maxLength={20}
             />
             <CustomButton
               label="회원가입"

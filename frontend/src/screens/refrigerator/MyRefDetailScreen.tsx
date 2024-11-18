@@ -92,10 +92,10 @@ const MyRefDetailScreen: React.FC = () => {
         {drinkAtPosition ? (
           <>
             <TouchableOpacity onPress={() => handleOpenModal(drinkAtPosition.id)}>
-              <View style={tw`w-20 h-20 rounded-lg`}>
+              <View style={tw`w-30 h-30 rounded-lg`}>
                 <Image
                   source={{ uri: drinkAtPosition.imageUrl }}
-                  style={tw`w-20 h-20 rounded-lg`}
+                  style={tw`w-30 h-30 rounded-lg`}
                   resizeMode='cover'
                 />
               </View>
@@ -112,7 +112,7 @@ const MyRefDetailScreen: React.FC = () => {
           </>
         ) : (
           <>
-            <View style={tw`w-20 h-20 bg-gray-300 rounded-lg`} />
+            <View style={tw`w-30 h-30 bg-gray-300 rounded-lg`} />
             <CustomFont style={tw`text-center text-sm mt-1 text-gray-500`}>빈 자리</CustomFont>
           </>
         )}
@@ -126,16 +126,16 @@ const MyRefDetailScreen: React.FC = () => {
         <Ionicons style={tw`p-2`} name="arrow-back-outline" size={30} />
       </TouchableOpacity>
       <CustomFont style={tw`text-center text-[30px]`}>술장고 상세</CustomFont>
-      <View style={tw`mt-10 border-2 border-gray-200  ml-2 w-400px h-600px`}>
+      <View style={tw`mt-10 border-2 border-gray-200  ml-2 w-400px h-550px`}>
         <LinearGradient
             colors={['#a0c4ff', '#a3bffa', '#f0f4f8']}
             style={tw`flex-1`}
             start={{ x: 1, y: 1 }}
             end = {{x: 0, y: 0 }}
           >
-          <View style={tw`flex-wrap flex-row mt-110 w-full justify-around p-4`}>
+          <View style={tw`flex-wrap flex-row mt-30 w-full justify-around p-4`}>
             {[1, 2, 3, 4].map((position) => (
-              <View key={position} style={tw`w-[90px]`}>
+              <View key={position} style={tw`w-[150px]`}>
                 {renderPosition(position)}
               </View>
             ))}
@@ -161,7 +161,14 @@ const MyRefDetailScreen: React.FC = () => {
                 <CustomFont>도수: {selectedDrink.degree}%</CustomFont>
                 <CustomFont>종류: {selectedDrink.type}</CustomFont>
                 <CustomFont>위치: {selectedDrink.position}</CustomFont>
-                <CustomFont>입고 시간: {selectedDrink.stockTime}</CustomFont>
+                <CustomFont>입고 시간: {new Date(selectedDrink.stockTime).toLocaleString('ko-KR', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                })}</CustomFont>
                 <TouchableOpacity onPress={() => setIsModalVisible(false)}>
                   <CustomFont style={tw`text-red-500 text-center mt-4`}>닫기</CustomFont>
                 </TouchableOpacity>

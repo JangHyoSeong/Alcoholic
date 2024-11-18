@@ -100,12 +100,14 @@ const CustomCocktailScreen: React.FC = () => {
         placeholder="영어 칵테일 이름"
         value={enCocktailName}
         onChangeText={setEnCocktailName}
+        maxLength={50}
       />
       <TextInput
         style={tw`border border-gray-300 rounded p-3 mb-3`}
         placeholder="한국어 칵테일 이름 (자음 단일, 모음 단일 입력 시 등록 불가)"
         value={krCocktailName}
         onChangeText={setKrCocktailName}
+        maxLength={50}
       />
       <TouchableOpacity onPress={handleChooseImage} style={tw`mb-4`}>
         {imageUri ? (
@@ -158,6 +160,7 @@ const CustomCocktailScreen: React.FC = () => {
               newIngredients[index].ingredient = text;
               setIngredients(newIngredients);
             }}
+            maxLength={50}
           />
 
           {/* 측정 단위 입력 */}
@@ -170,6 +173,7 @@ const CustomCocktailScreen: React.FC = () => {
               newIngredients[index].measure = text;
               setIngredients(newIngredients);
             }}
+            maxLength={10}
           />
           <TouchableOpacity onPress={() => removeIngredientField(index)}>
             <CustomFont style={tw`text-[red] text-right`}>재료 삭제</CustomFont>

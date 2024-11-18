@@ -37,6 +37,7 @@ const MypageForm = () => {
       <TextInput
         style={tw`border p-2 rounded ml-1 mr-2 flex-1`}
         value={newNickname}
+        maxLength={20}
         onChangeText={setNewNickname}
         onBlur={handleNicknamePut} // 포커스가 벗어날 때 변경 요청
       />
