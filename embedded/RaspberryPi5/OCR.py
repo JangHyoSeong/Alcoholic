@@ -166,7 +166,7 @@ def run_ocr(cap):
 
         if yolo_score > 0.85:
             return yolo_product
-        if similarity_score < 0.2: # 너무 낮으면 다시 촬영하게...
+        if similarity_score < 0.15: # 너무 낮으면 다시 촬영하게...
             return None
         return matched_product
     else:

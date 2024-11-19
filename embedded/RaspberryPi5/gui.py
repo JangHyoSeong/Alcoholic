@@ -5,6 +5,8 @@ from PIL import Image, ImageTk
 import os
 import cv2 
 import subprocess
+from loadcell import refrigerator_id, ARR_LEN, get_loadcell
+
 
 os.environ["DISPLAY"] = ":0"
 
@@ -36,9 +38,16 @@ class GUI:
             height=40
         )
         self.home_button.pack()
+        
+        is_full = get_loadcell(refrigerator_id, ARR_LEN)
+
+        if is_full:
+            initial_message = "빈 자리가 없습니다. 새로 등록하시려면 술을 먼저 꺼내주세요."
+        else:
+            initial_message = "카메라에 제품 라벨이 보이도록 위치시킨 후, [촬영하기] 버튼을 눌러주세요."
 
         # 상태 표시 라벨
-        self.status_label = ctk.CTkLabel(root, text="카메라에 제품 라벨이 보이도록 위치시킨 후, [등록하기] 버튼을 눌러주세요.", font=("Arial", 15))
+        self.status_label = ctk.CTkLabel(root, text=initial_message, font=("Arial", 20))
         self.status_label.pack(pady=20)
 
         # 실시간 카메라 및 결과를 담을 프레임
@@ -55,23 +64,24 @@ class GUI:
         self.captured_image_label.grid_forget()
 
         # "등록하기" 버튼
-        self.register_button = ctk.CTkButton(root, text="등록하기", command=self.start_ocr_callback, font=("Arial", 15), width=250, height=50)
-        self.register_button.pack(pady=10)
+        self.register_button = ctk.CTkButton(root, text="촬영하기", command=self.start_ocr_callback, font=("Arial", 20), width=250, height=50)
+        if not is_full:
+            self.register_button.pack(pady=10)
         
 
         # OCR 결과 화면 요소
         # self.captured_image_label = ctk.CTkLabel(root, text="")
-        self.product_label = ctk.CTkLabel(root, text="", font=("Arial", 15))
+        self.product_label = ctk.CTkLabel(root, text="", font=("Arial", 20))
 
         # OCR 후 버튼들
-        self.confirm_button = ctk.CTkButton(root, text="예", command=lambda: self.confirm_registration_callback(self.product_label.cget("text")), width=250, height=50, font=("Arial", 15))
-        self.retake_button = ctk.CTkButton(root, text="다시 촬영하기", command=self.start_ocr_callback, width=250, height=50, font=("Arial", 15))
-        self.manual_button = ctk.CTkButton(root, text="직접 등록하기", command=self.manual_entry_callback, width=250, height=50, font=("Arial", 15))
-        self.manual_button.pack(pady=10)
+        self.confirm_button = ctk.CTkButton(root, text="예", command=lambda: self.confirm_registration_callback(self.product_label.cget("text")), width=250, height=50, font=("Arial", 20))
+        self.retake_button = ctk.CTkButton(root, text="다시 촬영하기", command=self.start_ocr_callback, width=250, height=50, font=("Arial", 20))
+        self.manual_button = ctk.CTkButton(root, text="직접 등록하기", command=self.manual_entry_callback, width=250, height=50, font=("Arial", 20))
+        # self.manual_button.pack(pady=10)
 
         # 수기 입력 화면 요소
-        self.manual_entry = ctk.CTkEntry(root, font=("Arial", 15), width=250)
-        self.submit_button = ctk.CTkButton(root, text="등록", command=self.submit_manual_entry, width=250, height=50, font=("Arial", 15))
+        self.manual_entry = ctk.CTkEntry(root, font=("Arial", 20), width=250)
+        self.submit_button = ctk.CTkButton(root, text="등록", command=self.submit_manual_entry, width=250, height=50, font=("Arial", 20))
 
         self.show_camera_preview()
 
@@ -88,9 +98,10 @@ class GUI:
             self.retake_button.pack(pady=10)
             return
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # OpenCV는 BGR 포맷이므로 RGB로 변환
-        img = Image.fromarray(frame)
-        self.captured_img = ctk.CTkImage(img, size=(200, 200))
+        flipped_frame = cv2.flip(frame, 1)
+        flipped_frame = cv2.cvtColor(flipped_frame, cv2.COLOR_BGR2RGB)  # OpenCV는 BGR 포맷이므로 RGB로 변환
+        flipped_img = Image.fromarray(flipped_frame)
+        self.captured_img = ctk.CTkImage(flipped_img, size=(300, 300))
 
         self.camera_preview_label.configure(image=self.captured_img)
         self.camera_preview_label.image = self.captured_img
@@ -111,7 +122,7 @@ class GUI:
         # self.stop_camera_preview()
         try:
             sample_image = Image.open("captured_image.jpg")  # 이미지 파일 경로
-            self.captured_img = ctk.CTkImage(sample_image, size=(200, 200))
+            self.captured_img = ctk.CTkImage(sample_image, size=(300, 300))
             self.captured_image_label.configure(image=self.captured_img)
             self.captured_image_label.grid(row=0, column=1, padx=10, pady=10)
             # self.captured_image_label.pack(pady=20)
@@ -127,7 +138,7 @@ class GUI:
 
             self.confirm_button.pack(pady=10)
             self.retake_button.pack(pady=10)
-            self.manual_button.pack(pady=10)
+            # self.manual_button.pack(pady=10)
 
         else:
             self.status_label.configure(text="다시 촬영해주세요")
@@ -168,14 +179,16 @@ class GUI:
         self.confirm_button.pack_forget()
         self.retake_button.pack_forget()
         self.manual_button.pack_forget()
-        self.manual_entry.pack(pady=20)
-        self.submit_button.pack(pady=20)
+        self.manual_entry.pack(pady=10)
+        self.submit_button.pack(pady=10)
         self.camera_preview_label.grid_forget()
         self.captured_image_label.grid(row=0, column=1, padx=10, pady=10)
 
         # subprocess.Popen(["matchbox-keyboard"])
-        # subprocess.Popen(["florence"])
+        subprocess.Popen(["florence"])
         # subprocess.Popen(["onboard"])
+
+        # self.show_keyboard()
     
     def go_home(self):
         """홈 화면으로 이동"""
@@ -183,20 +196,30 @@ class GUI:
 
 
     def reset_to_initial_state(self):
-        self.status_label.configure(text="카메라에 제품 라벨이 보이도록 위치시킨 후, [등록하기] 버튼을 눌러주세요.")
+        is_full = get_loadcell(refrigerator_id, ARR_LEN)
+
+        if is_full:
+            initial_message = "빈 자리가 없습니다. 새로 등록하시려면 술을 먼저 꺼내주세요."
+            self.register_button.pack_forget()
+        else:
+            initial_message = "카메라에 제품 라벨이 보이도록 위치시킨 후, [촬영하기] 버튼을 눌러주세요."
+            self.register_button.pack(pady=10)
+
+        self.status_label.configure(text=initial_message)
         self.camera_preview_label.grid(row=0, column=0, padx=10, pady=10)
         self.captured_image_label.grid_forget()
 
         self.product_label.pack_forget()
         self.confirm_button.pack_forget()
         self.retake_button.pack_forget()
-        # self.manual_button.pack_forget()
+        self.manual_button.pack_forget()
         self.manual_entry.pack_forget()
         self.submit_button.pack_forget()
         self.confirm_button.configure(text="예", state="normal")
         self.retake_button.configure(text="다시 촬영하기", state="normal")
 
         self.home_button.pack()
-        self.register_button.pack(pady=10)
-        self.manual_button.pack(pady=10)
+        
+        # self.manual_button.pack(pady=10)
         # self.show_camera_preview()
+        

@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from collections import deque
 import os
 import requests
-import threading
 
 load_dotenv()
 server_api_url = os.getenv("SERVER_API_URL")
@@ -15,7 +14,7 @@ weight_queue = deque(maxlen=3)
 weight_cnt = [0,0,0,0]
 ARR_LEN = 4
 DETECTION_THRESHOLD = 2
-THRESHOLD_WEIGHT = 120
+THRESHOLD_WEIGHT = 80
 refrigerator_id = 1
 
 # register_event = threading.Event()
@@ -52,7 +51,7 @@ def register_drink(refrigerator_id, drink_name, position, image_path):
         return None
 
 
-def delete_drink(refrigerator_id, position):
+def delete_drink(refrigerator_id, position, update_gui_callback=None):
     url = f"{server_api_url}/refrigerators/admin/stocks/{refrigerator_id}"
     headers = {
         "Authorization": token,
@@ -70,6 +69,8 @@ def delete_drink(refrigerator_id, position):
         result = response.json().get("result")
         if result == "deleted":
             print(f"DELETE 요청 성공: 위치 {position}의 술이 삭제되었습니다.")
+            if update_gui_callback:
+                update_gui_callback()
         else:
             print("삭제 실패:", response.json())
         return result
@@ -95,12 +96,31 @@ def get_inventory(refrigerator_id, ARR_LEN):
             position = item.get("position")
             if position and 1 <= position <= ARR_LEN:
                 visited[position - 1] = True
-        print("get 요청 성공: ", visited)
+        # print("get 요청 성공: ", visited)
         return visited
 
     except requests.exceptions.RequestException as e:
         print("요청 중 오류 발생:", e)
         return []
+
+def get_loadcell(refrigerator_id, ARR_LEN):
+    headers = {
+        "Authorization": token  # GET 요청에는 Content-Type이 필요하지 않음
+    }
+    try:
+        response = requests.get(f"{server_api_url}/refrigerators/{refrigerator_id}", headers=headers)
+        response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
+        data = response.json()       # JSON 데이터를 딕셔너리로 변환
+        results = data.get("results", [])
+
+        registered_count = len(results)
+        if registered_count >= ARR_LEN:
+            return True
+        return False
+
+    except requests.exceptions.RequestException as e:
+        print("요청 중 오류 발생:", e)
+        return None
 
 def registration_detection(inventory, idx, product_name):
     global registration_successful
@@ -120,17 +140,17 @@ def registration_detection(inventory, idx, product_name):
             inventory[idx] = True
 
 
-def removal_detection(inventory, idx):
+def removal_detection(inventory, idx, update_gui_callback):
     if len(weight_queue) > 0 and weight_queue[-1][idx] < THRESHOLD_WEIGHT and weight_cnt[idx] > 0:
-        weight_cnt[idx] -= 1
+        weight_cnt[idx] -= 0.5
     else:
         weight_cnt[idx] = DETECTION_THRESHOLD
-    if weight_cnt[idx] == 0:
+    if weight_cnt[idx] <= 0:
         ## delete 제거
-        delete_drink(refrigerator_id, idx+1)
+        delete_drink(refrigerator_id, idx+1, update_gui_callback)
         inventory[idx] = False
 
-def start_registration_monitoring(ser, product_name=None):
+def start_registration_monitoring(ser, cancel_registration, product_name=None):
     """등록 모드에서 로드셀 데이터 모니터링 함수"""
     global registration_successful, register_event
     registration_successful = False
@@ -143,8 +163,13 @@ def start_registration_monitoring(ser, product_name=None):
 
     try:
         while True:
+            if cancel_registration.is_set():
+                print("등록 취소 플래그 감지, 종료 중...")
+                return
+
             if ser.in_waiting > 0:
                 data = list(map(int, ser.readline().decode('utf-8').strip().split()))
+                # print(data)
 
                 if len(data) == ARR_LEN:
                     weight_queue.append(data)
@@ -162,7 +187,7 @@ def start_registration_monitoring(ser, product_name=None):
                             register_event = False
                             return
 
-            time.sleep(0.2)
+            time.sleep(0.1)
 
     except serial.SerialException as e:
         print(f"시리얼 연결 문제 발생: {e}")
@@ -172,7 +197,7 @@ def start_registration_monitoring(ser, product_name=None):
         # register_event.clear()
         register_event = False
 
-def start_delete_monitoring(ser):
+def start_delete_monitoring(ser, update_gui_callback):
     """삭제 모드에서 로드셀 데이터 모니터링 함수 (항상 동작)"""
     global register_event
     
@@ -190,6 +215,7 @@ def start_delete_monitoring(ser):
             
             if ser.in_waiting > 0:    
                 data = list(map(int, ser.readline().decode('utf-8').strip().split()))
+                # print(data)
 
                 if len(data) == ARR_LEN:
                     weight_queue.append(data)
@@ -200,9 +226,9 @@ def start_delete_monitoring(ser):
                 for i in range(ARR_LEN):
                     # 삭제 모드 로직
                     if inventory[i]:
-                        removal_detection(inventory, i)
+                        removal_detection(inventory, i, update_gui_callback)
 
-            time.sleep(1)
+            time.sleep(0.1)
 
     except serial.SerialException as e:
         print(f"시리얼 연결 문제 발생: {e}")

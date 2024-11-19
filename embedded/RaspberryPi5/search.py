@@ -17,7 +17,7 @@ def text_to_jamo(text):
 
 
 def custom_text(text):
-    return text_to_jamo(preprocess_text(text))
+    return text_to_jamo(preprocess_text(text)).strip()
 
 
 def calculate_levenshtein_similarity(text1, text2):
@@ -25,7 +25,7 @@ def calculate_levenshtein_similarity(text1, text2):
 
 
 def calculate_jaccard_similarity(text1, text2):
-    vectorizer = CountVectorizer(analyzer='char', ngram_range=(1, 3))
+    vectorizer = CountVectorizer(analyzer='char', ngram_range=(2, 3))
     vectorizer.fit([text1, text2])  # 공통된 특징 공간 생성
     ngrams1 = vectorizer.transform([text1])
     ngrams2 = vectorizer.transform([text2])
@@ -49,8 +49,8 @@ def find_most_similar_product(text, product_data):
 
         # en_similarity = calculate_levenshtein_similarity(customed_text, customed_en_name)
         # kr_similarity = calculate_levenshtein_similarity(customed_text, customed_kr_name)
-        en_similarity = calculate_jaccard_similarity(text, en_name)
-        kr_similarity = calculate_jaccard_similarity(text, kr_name)
+        en_similarity = calculate_jaccard_similarity(customed_text, customed_en_name)
+        kr_similarity = calculate_jaccard_similarity(customed_text, customed_kr_name)
 
         if en_similarity > highest_similarity:
             highest_similarity = en_similarity
