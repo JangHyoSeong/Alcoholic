@@ -3,7 +3,7 @@
 # 알코홀릭
 
 ### 🍷 스마트한 주류 관리와 칵테일 추천 서비스 🍸
-<img src="/uploads/de0f29c881c1834e5dbdee93e0315919/mainlogo.png" alt="메인로고" width="300px">
+![image](https://github.com/user-attachments/assets/2e712ff1-89a5-400b-97f4-f8f945b9e6e5)
 
 </div>
 
@@ -72,70 +72,60 @@
     <td align="center">메인 페이지</td>
   </tr>
   <tr>
-    <td align="center"><img src='/uploads/8862d98db24eb1c52c5db26d9c69ee63/메인.gif' alt='메인 페이지 이미지' width="300px"></td>
+    <td align="center"><img src='https://github.com/user-attachments/assets/96a35cdb-fd8e-4772-99f3-aedc414d95e8' alt='메인 페이지 이미지' width="300px"></td>
   </tr>
   <tr>
     <td align="center">술장고 페이지</td>
   </tr>
   <tr>
-    <td align="center"><img src='/uploads/fb8443bb1e8978d7784d3a834e33c508/술장고.gif' alt='술장고 페이지 이미지' width="300px"></td>
+    <td align="center"><img src='https://github.com/user-attachments/assets/14b02dbb-80ef-4472-aa80-3fa0303a94cc' alt='술장고 페이지 이미지' width="300px"></td>
   </tr>
     <tr>
     <td align="center">추천 페이지</td>
   </tr>
   <tr>
-    <td align="center"><img src='/uploads/c59e3e4936c22bbaf73b382f5ac5ae36/추천.gif' alt='추천 페이지 이미지' width="300px"></td>
+    <td align="center"><img src='https://github.com/user-attachments/assets/2b332dc3-ef8c-4129-bb1e-55fe94ee19ac' alt='추천 페이지 이미지' width="300px"></td>
   </tr>
     <tr>
     <td align="center">레시피 페이지</td>
   </tr>
   <tr>
-    <td align="center"><img src='/uploads/07f8ec2275a5038cefd21052d4239fff/레시피.gif' alt='레시피 페이지 이미지' width="300px"></td>
+    <td align="center"><img src='https://github.com/user-attachments/assets/ffbb5b23-e33d-40cf-b746-ed1c4958c6b1' alt='레시피 페이지 이미지' width="300px"></td>
   </tr>
 </table>
 
 ## 👻 Member
 <table>
   <tr>
-    <td align="center">IoT, 팀장</td>
-    <td align="center">AI</td>
-    <td align="center">프론트엔드</td>
-    <td align="center">백엔드</td>
-    <td align="center">인프라, 백엔드</td>
-  </tr>
-  <tr>
-    <td align="center" width="120px">
-      <img src="/uploads/75a4418f3ccfbc72a5dcd7b520266445/iot.png" alt="프로필" />
-    </td>
-    <td align="center" width="120px">
-      <img src="/uploads/4898813064a31615a8f1191427c3a73f/ai.png" alt="프로필" />
-    </td>
-    <td align="center" width="120px">
-      <img src="/uploads/d2caf013e9824dc9b6bf2644bf15f56f/fe.png" alt="프로필" />
-    </td>
-    <td align="center" width="120px">
-      <img src="/uploads/a7b632812e8e423b35c3f6d985bc6425/be.png" alt="프로필" />
-    </td>
-    <td align="center" width="120px">
-      <img src="/uploads/b9a1c4516c1b2c4bf062efca30b585fe/infra.png" alt="프로필" />
-    </td>
+    <th>IoT, 팀장</th>
+    <th>AI</th>
+    <th>프론트엔드</th>
+    <th>백엔드</th>
+    <th>인프라, 백엔드</th>
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/everev1" target="_blank">김지환</a>
-    </td>
-     <td align="center">
-      <a href="https://github.com/dotorio" target="_blank">김종덕</a>
-    </td> 
-    <td align="center">
-      <a href="https://github.com/pjayw" target="_blank">박지원</a>
+      <img src="https://github.com/user-attachments/assets/c3b85d45-2cbb-417b-afe6-468e05f7eb70" width="100px" height="100px" />
     </td>
     <td align="center">
-      <a href="https://github.com/kdhn97" target="_blank">김동현</a>
+      <img src="https://github.com/user-attachments/assets/4eaadc59-fee1-4594-aab3-5d1c09bad6f8" width="100px" height="100px" />
     </td>
     <td align="center">
-      <a href="https://github.com/JangHyoSeong" target="_blank">장효승</a>
-    </td> 
+      <img src="https://github.com/user-attachments/assets/53303f6b-7dc5-44a8-a4b9-3a2290a2018d" width="100px" height="100px" />
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/cc987d99-e3f5-4545-98e6-c53881bc97b5" width="100px" height="100px" />
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/5a1392b6-2c63-4a07-9441-5c14aa0e7897" width="100px" height="100px" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/everev1" target="_blank">김지환</a></td>
+    <td align="center"><a href="https://github.com/dotorio" target="_blank">김종덕</a></td>
+    <td align="center"><a href="https://github.com/pjayw" target="_blank">박지원</a></td>
+    <td align="center"><a href="https://github.com/kdhn97" target="_blank">김동현</a></td>
+    <td align="center"><a href="https://github.com/JangHyoSeong" target="_blank">장효승</a></td>
   </tr>
 </table>
 
@@ -149,4 +139,4 @@
 | 장효승 | Infra <br /> Back-end | **Infra** <br>- CI/CD 파이프라인 구축 <br>- 클라우드 인프라 설계 및 관리 <br>- 모니터링 시스템 구축 <br> **BE** <br>- Spring Security를 사용한 유저 인증 및 권한 관리 구현 <br>- 실시간 데이터 처리 로직 구현 |
 
 ## 📊 ERD
-<img src="/uploads/052aa8c1c8299e8ea4d55c46d594d0d7/ERD.png" width="1000px" alt="ERD">
+![image](https://github.com/user-attachments/assets/d021c384-e4f9-48db-947c-4aa7fb1d23b7)
